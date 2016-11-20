@@ -1,0 +1,10 @@
+FRAMEWORK: >= NET46
+NUGET
+  remote: https://www.nuget.org/api/v2
+    Dapper (1.50.2)
+    FluentMigrator (1.6.2)
+    FSharp.Core (4.0.0.1)
+    FSharp.Data (2.3.2)
+    NUnit (3.5)
+    System.Data.SQLite.Core (1.0.103)
+    Unquote (3.1.2)
