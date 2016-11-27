@@ -12,8 +12,6 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DevRT", "DevRT\DevRT.fsproj
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DevRT.Tests", "DevRT.Tests\DevRT.Tests.fsproj", "{8de8cb2d-758b-4d1f-ac87-5c4e04b06304}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Common", "Common\Common.fsproj", "{22FA2BAC-5D79-4738-AAAD-E540F01F73D5}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DevRT.Console", "DevRT.Console\DevRT.Console.fsproj", "{0554B12E-C406-40A2-805A-1587D915FB4D}"
 EndProject
 Global
@@ -30,10 +28,6 @@ Global
 		{8de8cb2d-758b-4d1f-ac87-5c4e04b06304}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8de8cb2d-758b-4d1f-ac87-5c4e04b06304}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8de8cb2d-758b-4d1f-ac87-5c4e04b06304}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22FA2BAC-5D79-4738-AAAD-E540F01F73D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22FA2BAC-5D79-4738-AAAD-E540F01F73D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22FA2BAC-5D79-4738-AAAD-E540F01F73D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22FA2BAC-5D79-4738-AAAD-E540F01F73D5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0554B12E-C406-40A2-805A-1587D915FB4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0554B12E-C406-40A2-805A-1587D915FB4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0554B12E-C406-40A2-805A-1587D915FB4D}.Release|Any CPU.ActiveCfg = Release|Any CPU

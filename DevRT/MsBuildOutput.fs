@@ -1,6 +1,6 @@
 module MsBuildOutput 
     open DevRT
-    open Common.ConsoleUtil
+    open Common
 
     let getUpdatedStatus currentStatus (data: string) =
         match data with
@@ -14,10 +14,8 @@ module MsBuildOutput
         | BuildFailed | MSBuildError -> writelineRed 
         | BuildSucceeded -> appendToLinePurple 
 
-    let isBuildSuccess = function | BuildSucceeded -> true | _ -> false
-
     let createMsBuildHandle() =
         let handler = MsBuildOutputHandler()
         let handleMsBuildOutput = handler.Handle getUpdatedStatus processOutput
-        let isMsBuildSuccess() = isBuildSuccess (handler.GetBuildStatus())
+        let isMsBuildSuccess() = handler.GetBuildStatus() = BuildSucceeded
         handleMsBuildOutput, isMsBuildSuccess 

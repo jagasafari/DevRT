@@ -1,8 +1,8 @@
 module ProcessStartInfoProvider
 
 open System.Diagnostics
-open Common.Bind
 open System
+open Common
 
 let getProcessStartInfo fileName arguments workingDir =
     let psi = ProcessStartInfo()

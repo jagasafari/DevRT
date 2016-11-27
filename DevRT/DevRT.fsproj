@@ -41,8 +41,10 @@
   </Target>
   <ItemGroup>
     <None Include="paket.references" />
+    <Compile Include="Common.fs" />
     <Compile Include="DataTypes.fs" />
     <Compile Include="MsBuildOutput.fs" />
+    <Compile Include="NUnitOutput.fs" />
     <Compile Include="ProcessStartInfoProvider.fs" />
     <Compile Include="ProcessRunner.fs" />
     <Compile Include="MsBuildRunner.fs" />
@@ -57,12 +59,5 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common\Common.fsproj">
-      <Name>Common</Name>
-      <Project>{22fa2bac-5d79-4738-aaad-e540f01f73d5}</Project>
-      <Private>True</Private>
-    </ProjectReference>
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 module ProcessRunner
 
 open System.Diagnostics
-open Common.ConsoleUtil
+open Common
 
 let run processStartInfo handleOutput =
     use proc = new Process(StartInfo = processStartInfo)

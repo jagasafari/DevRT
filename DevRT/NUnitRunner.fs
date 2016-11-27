@@ -1,7 +1,7 @@
 module NUnitRunner
 
 open System
-open Common.FileUtil
+open Common
 open DevRT
 open ProcessRunner
 open ProcessStartInfoProvider
@@ -39,23 +39,16 @@ let copyBuildOutput deploymentDir debugDirectories =
                                 d, Path.Combine(deploymentDir, ta), ta)
         targets |> Seq.iter(fun (d, t, _) -> copyAllFiles d t)
         targets |> Seq.map(fun (_, t, ta) -> t, ta))
-
-let wl (d:string) = 
-    //if d.Contains("Overall") || d.Contains("Test Count") || d.Contains("Failed :") then
-        Console.WriteLine(d)
-
-let runTest nunitConsole dllDirectory dllFile =
+let runTest handleOutput nunitConsole dllDirectory dllFile =
     let startInfo = getProcessStartInfo nunitConsole dllFile dllDirectory
-    run startInfo wl
+    run startInfo handleOutput
 
-let runTests nunitConsole testDllsDirectories =
+let runTests handleOutput nunitConsole testDllsDirectories =
     match testDllsDirectories with
     | Some td -> 
         td 
         |> Seq.iter (fun (directoryPath, directoryName) ->
             let dllName = sprintf "%s.dll" directoryName
             let dllFile = Path.Combine(directoryPath, dllName)
-            runTest nunitConsole directoryPath dllFile) 
+            runTest handleOutput nunitConsole directoryPath dllFile) 
     | None -> ()
-
-        

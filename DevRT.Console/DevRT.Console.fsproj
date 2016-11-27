@@ -49,11 +49,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.fsproj">
-      <Name>Common</Name>
-      <Project>{22fa2bac-5d79-4738-aaad-e540f01f73d5}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\DevRT\DevRT.fsproj">
       <Name>DevRT</Name>
       <Project>{18c95c70-30dc-4483-a754-ce23afa35370}</Project>
