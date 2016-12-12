@@ -1,29 +1,19 @@
-﻿open System.Threading
-open ci
-open ExportApi
-open System
+﻿module DevRT.Console
 
-let msBuild() = @"c:\Program Files (x86)\MSBuild\14.0\Bin\MsBuild.exe"
-
-let deploymentDir = @"c:\run\nunit"
-
-let buildOutputDirectory = @"c:\DevRT\"
-
-let nunitConsole() = @"C:\Program Files (x86)\NUnit.org\nunit-console\nunit3-console.exe"
-
-let msBuildWorkingDirectory = @"c:\DevRT"
+let config = {
+    MsBuildPath =  @"c:\Program Files (x86)\MSBuild\14.0\Bin\MsBuild.exe"
+    DeploymentDir =  @"c:\run\nunit"
+    NUnitConsole = 
+        @"C:\Program Files (x86)\NUnit.org\nunit-console\nunit3-console.exe"
+    MsBuildWorkingDir =  @"c:\DevRT"
+    FileChangeWithinLastSeconds = 3
+    }
 
 [<EntryPoint>]
 let main argv =
-    let pathsForTestRunner =
-        {
-            Runner = nunitConsole 
-            DeploymentDir = deploymentDir
-            BuildDirectory = buildOutputDirectory
-        }
-
+    let post = ExportApi.getPostToFileWatchAgent config
     while true do
-        runMsBuild msBuild msBuildWorkingDirectory |> runNUnit pathsForTestRunner |> ignore
-        Thread.Sleep 1000
-    Console.ReadKey() |> ignore
+        () |> post
+        System.Threading.Thread.Sleep 1000
+    System.Console.ReadKey() |> ignore
     0

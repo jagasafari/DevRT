@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -10,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DevRT", "DevRT\DevRT.fsproj", "{18C95C70-30DC-4483-A754-CE23AFA35370}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DevRT.Tests", "DevRT.Tests\DevRT.Tests.fsproj", "{8de8cb2d-758b-4d1f-ac87-5c4e04b06304}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DevRT.Tests", "DevRT.Tests\DevRT.Tests.fsproj", "{8DE8CB2D-758B-4D1F-AC87-5C4E04B06304}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DevRT.Console", "DevRT.Console\DevRT.Console.fsproj", "{0554B12E-C406-40A2-805A-1587D915FB4D}"
 EndProject
@@ -24,10 +25,10 @@ Global
 		{18C95C70-30DC-4483-A754-CE23AFA35370}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18C95C70-30DC-4483-A754-CE23AFA35370}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18C95C70-30DC-4483-A754-CE23AFA35370}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8de8cb2d-758b-4d1f-ac87-5c4e04b06304}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8de8cb2d-758b-4d1f-ac87-5c4e04b06304}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8de8cb2d-758b-4d1f-ac87-5c4e04b06304}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8de8cb2d-758b-4d1f-ac87-5c4e04b06304}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DE8CB2D-758B-4D1F-AC87-5C4E04B06304}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DE8CB2D-758B-4D1F-AC87-5C4E04B06304}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DE8CB2D-758B-4D1F-AC87-5C4E04B06304}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DE8CB2D-758B-4D1F-AC87-5C4E04B06304}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0554B12E-C406-40A2-805A-1587D915FB4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0554B12E-C406-40A2-805A-1587D915FB4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0554B12E-C406-40A2-805A-1587D915FB4D}.Release|Any CPU.ActiveCfg = Release|Any CPU

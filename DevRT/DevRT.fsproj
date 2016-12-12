@@ -41,6 +41,7 @@
   </Target>
   <ItemGroup>
     <None Include="paket.references" />
+    <Compile Include="ContractDataTypes.fs" />
     <Compile Include="Common.fs" />
     <Compile Include="DataTypes.fs" />
     <Compile Include="MsBuildOutput.fs" />
@@ -49,6 +50,9 @@
     <Compile Include="ProcessRunner.fs" />
     <Compile Include="MsBuildRunner.fs" />
     <Compile Include="NUnitRunner.fs" />
+    <Compile Include="Agent.fs" />
+    <Compile Include="FileWatchAgent.fs" />
+    <Compile Include="CiStepsRunAgent.fs" />
     <Compile Include="ExportApi.fs" />
   </ItemGroup>
   <ItemGroup>

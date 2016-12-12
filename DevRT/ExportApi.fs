@@ -1,23 +1,38 @@
-module ci.ExportApi 
-    
-open DevRT
-open NUnitRunner
+module DevRT.ExportApi 
+  
+let getPostToFileWatchAgent config = 
 
-[<NoComparison; NoEquality>]
-type PathsForTestRunner = 
-    { Runner: unit -> string; DeploymentDir: string; BuildDirectory: string}
+    let runMsBuild' () = 
+        MsBuildRunner.run config.MsBuildPath config.MsBuildWorkingDir 
 
-let runMsBuild = MsBuildRunner.runMsBuild 
+    let runNUnit' = 
+        NUnitRunner.run 
+            config.NUnitConsole 
+            config.DeploymentDir 
+            config.MsBuildWorkingDir 
 
-let runNUnit paths previousStepSuccess =
-    let outputHandler = NUnitOutputHandler()
-    let handle = outputHandler.Handle NUnitOutput.getUpdatedStatus NUnitOutput.filterOutput
+    let ciStepsRunHandle = CiStepsRunAgent.handle runMsBuild' runNUnit'
 
-    let testRunningFlow = 
-        stopNunitProcess (getProcesses "nunit-agent") (killProcess (sleep 500))
-        >> cleanDeploymentDir paths.DeploymentDir  
-        >> getDebugDirectories paths.BuildDirectory 
-        >> copyBuildOutput paths.DeploymentDir
-        >> runTests handle paths.Runner
+    let stepsRunAgent = Agent.createAgent ciStepsRunHandle ()
 
-    testRunningFlow previousStepSuccess
+    let getFsFiles() = FileWatchAgent.getFiles config.MsBuildWorkingDir
+
+    let getTimeLine' () = 
+        FileWatchAgent.getTimeLine 
+            FileWatchAgent.getNow
+            config.FileChangeWithinLastSeconds
+
+    let isModified' = 
+        FileWatchAgent.isModified 
+            getTimeLine' FileWatchAgent.getLastWriteTime
+        
+    let fileWatchHandle =
+        FileWatchAgent.handle 
+            getFsFiles
+            isModified' 
+            stepsRunAgent.Post
+
+
+    let fileWatchAgent = Agent.createAgent fileWatchHandle () 
+
+    fileWatchAgent.Post

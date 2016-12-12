@@ -6,7 +6,7 @@ open Common
 
 let getProcessStartInfo fileName arguments workingDir =
     let psi = ProcessStartInfo()
-    psi.FileName <- fileName()
+    psi.FileName <- fileName
     psi.Arguments <- arguments
     psi.WorkingDirectory <- workingDir
     psi.UseShellExecute <- false

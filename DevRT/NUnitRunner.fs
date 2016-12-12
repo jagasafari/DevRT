@@ -52,3 +52,20 @@ let runTests handleOutput nunitConsole testDllsDirectories =
             let dllFile = Path.Combine(directoryPath, dllName)
             runTest handleOutput nunitConsole directoryPath dllFile) 
     | None -> ()
+    
+let run runnerDir deploymentDir buildDir previousStepSuccess =
+    let outputHandler = NUnitOutputHandler()
+    let handle = 
+        outputHandler.Handle 
+            NUnitOutput.getUpdatedStatus NUnitOutput.filterOutput
+
+    let testRunningFlow = 
+        stopNunitProcess 
+            (getProcesses "nunit-agent") (killProcess (sleep 500))
+        >> cleanDeploymentDir deploymentDir
+        >> getDebugDirectories buildDir
+        >> copyBuildOutput deploymentDir  
+        >> runTests handle runnerDir
+
+    testRunningFlow previousStepSuccess
+

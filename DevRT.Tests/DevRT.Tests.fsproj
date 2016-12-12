@@ -43,6 +43,8 @@
     <None Include="paket.references" />
     <None Include="App.config" />
     <Compile Include="NUnitRunnerTest.fs" />
+    <Compile Include="CiStepsRunAgentTests.fs" />
+    <Compile Include="FileWatchAgentTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
