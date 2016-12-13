@@ -42,6 +42,7 @@
   <ItemGroup>
     <None Include="paket.references" />
     <None Include="App.config" />
+    <Compile Include="Common.fs" />
     <Compile Include="NUnitRunnerTest.fs" />
     <Compile Include="CiStepsRunAgentTests.fs" />
     <Compile Include="FileWatchAgentTests.fs" />

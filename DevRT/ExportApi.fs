@@ -7,6 +7,7 @@ let getPostToFileWatchAgent config =
 
     let runNUnit' = 
         NUnitRunner.run 
+            config.TestProjects
             config.NUnitConsole 
             config.DeploymentDir 
             config.MsBuildWorkingDir 
