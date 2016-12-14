@@ -7,5 +7,5 @@ type DevRTConfiguration = {
     MsBuildWorkingDir: string
     WatchedFilesExtenstions: string list
     FileChangeWithinLastSeconds: int
-    TestProjects: string list
+    TestProjects: (string * string list)
 }

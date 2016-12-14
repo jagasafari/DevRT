@@ -20,29 +20,28 @@ let cleanDeploymentDir deploymentDir =
     deleteAllFiles deploymentDir
     Directory.CreateDirectory(deploymentDir) |> ignore
 
-let copyBuildOutput deploymentDir debugDirectories =
-    let targets =
-        debugDirectories 
-        |> Seq.map(
-            fun (d:string) -> 
-                    let tar = d.Split(Path.DirectorySeparatorChar)
-                    let ta = tar.[2]
-                    d, Path.Combine(deploymentDir, ta), ta)
-    targets |> Seq.iter(fun (d, t, _) -> copyAllFiles d t)
-    targets |> Seq.map(fun (_, t, ta) -> t, ta)
+let copyBuildOutput deploymentDir (outputDir: string) =
+    let tar = outputDir.Split(Path.DirectorySeparatorChar)
+    let ta = tar.[2]
+    let target = Path.Combine(deploymentDir, ta)
+    copyAllFiles outputDir target
+    target
 
 let runTest handleOutput nunitConsole dllDirectory dllFile =
     let startInfo = getProcessStartInfo nunitConsole dllFile dllDirectory
     ProcessRunner.run startInfo handleOutput
 
-let runTests handleOutput nunitConsole testDllsDirectories =
-    testDllsDirectories 
-    |> Seq.iter (fun (directoryPath, directoryName) ->
-        let dllName = sprintf "%s.dll" directoryName
-        let dllFile = Path.Combine(directoryPath, dllName)
-        runTest handleOutput nunitConsole directoryPath dllFile) 
-
-let run (testProjects: string seq) runnerDir deploymentDir buildDir = function
+let runTests handleOutput nunitConsole outputDirectory testProjects =
+    testProjects
+    |> Seq.iter ( fun tp ->
+        let dllName = sprintf "%s.dll" tp 
+        let dllFile = Path.Combine(outputDirectory, dllName)
+        runTest handleOutput nunitConsole outputDirectory dllFile )
+let run 
+    (outputDir, testProjects: string seq) 
+    runnerDir 
+    deploymentDir 
+    buildDir = function
     | false -> ()
     | true ->
         let outputHandler = NUnitOutputHandler()
@@ -53,5 +52,6 @@ let run (testProjects: string seq) runnerDir deploymentDir buildDir = function
         stopNunitProcess 
                 (getProcesses "nunit-agent") (killProcess (sleep 500))
         cleanDeploymentDir deploymentDir
-        let ru = copyBuildOutput deploymentDir testProjects
-        runTests handle runnerDir ru
+        let outputDirectory = 
+            copyBuildOutput deploymentDir outputDir
+        runTests handle runnerDir outputDirectory testProjects

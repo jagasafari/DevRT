@@ -15,6 +15,7 @@ let getPostToFileWatchAgent config =
     let ciStepsRunHandle = CiStepsRunAgent.handle runMsBuild' runNUnit'
 
     let stepsRunAgent = Agent.createAgent ciStepsRunHandle ()
+    stepsRunAgent.Error.Add(fun exn -> printfn "%A" exn)
 
     let getFiles() = 
         FileWatchAgent.getFiles 

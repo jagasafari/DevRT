@@ -7,7 +7,8 @@ let config = {
         @"C:\Program Files (x86)\NUnit.org\nunit-console\nunit3-console.exe"
     MsBuildWorkingDir =  @"c:\DevRT"
     FileChangeWithinLastSeconds = 3
-    TestProjects = [@"c:\DevRT\DevRT.Tests\bin\Debug"]
+    TestProjects = 
+        @"c:\DevRT\DevRT.Tests\bin\Debug", ["DevRT.Tests.dll"; "DevRT.Tests.dll"]
     WatchedFilesExtenstions = ["fs";"fsproj"]
     }
 
