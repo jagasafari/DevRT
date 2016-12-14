@@ -8,6 +8,7 @@ let config = {
     MsBuildWorkingDir =  @"c:\DevRT"
     FileChangeWithinLastSeconds = 3
     TestProjects = [@"c:\DevRT\DevRT.Tests\bin\Debug"]
+    WatchedFilesExtenstions = ["fs";"fsproj"]
     }
 
 [<EntryPoint>]

@@ -5,6 +5,7 @@ type DevRTConfiguration = {
     DeploymentDir: string
     NUnitConsole: string
     MsBuildWorkingDir: string
+    WatchedFilesExtenstions: string list
     FileChangeWithinLastSeconds: int
     TestProjects: string list
 }

@@ -1,8 +1,12 @@
 module FileWatchAgent
 
-let getFiles dir =
-    System.IO.Directory.GetFiles(
-       dir, "*.fs", System.IO.SearchOption.AllDirectories) 
+let getFiles extensions dir =
+    seq {
+        for ext in extensions do
+            let filePattern = sprintf "*.%s" ext
+            yield! System.IO.Directory.GetFiles(
+                dir, filePattern, System.IO.SearchOption.AllDirectories) 
+    }
 
 let getNow() = System.DateTime.Now
 
@@ -16,7 +20,7 @@ let getLastWriteTime filePath =
 let isModified getTimeLine getLastWriteTime filePath =
     (getLastWriteTime filePath) > (getTimeLine())
 
-let handle getFsFiles isModified post () = 
-    let isPost = getFsFiles() |> Seq.exists isModified
+let handle getFiles isModified post () = 
+    let isPost = getFiles() |> Seq.exists isModified
     
     if isPost then () |> post

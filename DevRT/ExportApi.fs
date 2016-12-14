@@ -16,7 +16,9 @@ let getPostToFileWatchAgent config =
 
     let stepsRunAgent = Agent.createAgent ciStepsRunHandle ()
 
-    let getFsFiles() = FileWatchAgent.getFiles config.MsBuildWorkingDir
+    let getFiles() = 
+        FileWatchAgent.getFiles 
+            config.WatchedFilesExtenstions config.MsBuildWorkingDir
 
     let getTimeLine' () = 
         FileWatchAgent.getTimeLine 
@@ -29,7 +31,7 @@ let getPostToFileWatchAgent config =
         
     let fileWatchHandle =
         FileWatchAgent.handle 
-            getFsFiles
+            getFiles
             isModified' 
             stepsRunAgent.Post
 
