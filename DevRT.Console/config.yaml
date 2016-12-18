@@ -1,0 +1,18 @@
+Environment:
+    MsBuildPath: c:/Program Files (x86)/MSBuild/14.0/Bin/MsBuild.exe
+    NUnitConsole: 
+        C:/Program Files (x86)/NUnit.org/nunit-console/nunit3-console.exe
+    DeploymentDir: c:/run/nunit
+Solution:
+    FileChangeWithinLastSeconds: 3
+    WatchedFilesExtenstions: 
+    - fs
+    - fsproj
+    - sln
+    - yaml
+    MsBuildWorkingDir: c:/DevRT
+    TestProjectDirectory: c:/DevRT/DevRT.Tests/bin/Debug
+    TestProjects:
+    - DevRT.Tests
+    SolutionFile: MyDev.sln
+    

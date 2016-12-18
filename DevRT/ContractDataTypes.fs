@@ -1,11 +1,16 @@
 namespace DevRT
 
-type DevRTConfiguration = {
+type EnvironmentConfiuration = {
     MsBuildPath: string
-    DeploymentDir: string
     NUnitConsole: string
-    MsBuildWorkingDir: string
-    WatchedFilesExtenstions: string list
+    DeploymentDir: string
+}
+
+[<NoComparison>]
+type SolutionConfiguration = {
     FileChangeWithinLastSeconds: int
+    WatchedFilesExtenstions: seq<string>
+    MsBuildWorkingDir: string
     TestProjects: (string * string list)
+    SolutionFile: string
 }

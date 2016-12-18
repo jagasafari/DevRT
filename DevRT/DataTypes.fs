@@ -2,7 +2,8 @@ namespace DevRT
 
 open System
 
-type MsBuildStatus = | Building | BuildFailed | BuildSucceeded | MSBuildError
+type MsBuildStatus = 
+    | Building | BuildFailed | BuildSucceeded | MSBuildError
 
 type NUnitOutputStatus = | Noise | Summary | Failure
 

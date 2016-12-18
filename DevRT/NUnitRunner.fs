@@ -7,7 +7,7 @@ open ProcessRunner
 open ProcessStartInfoProvider
 open System.IO
 
-let killProcess sleep (p:System.Diagnostics.Process) = p.Kill(); sleep()
+let killProcess sleep (p:Diagnostics.Process) = p.Kill(); sleep()
 
 let getProcesses name () = Diagnostics.Process.GetProcessesByName name
 
@@ -21,7 +21,7 @@ let cleanDeploymentDir deploymentDir =
     Directory.CreateDirectory(deploymentDir) |> ignore
 
 let copyBuildOutput deploymentDir (outputDir: string) =
-    let tar = outputDir.Split(Path.DirectorySeparatorChar)
+    let tar = outputDir.Split('/')
     let ta = tar.[2]
     let target = Path.Combine(deploymentDir, ta)
     copyAllFiles outputDir target

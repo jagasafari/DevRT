@@ -1,13 +1,13 @@
 module RunNUnit
 
 open System
-open Common.FileUtil
+open System.Diagnostics
+open System.IO
 open System.Threading
+open Common.FileUtil
 open ci
 open ProcessRunner
 open ProcessStartInfoProvider
-open System.Diagnostics
-open System.IO
 
 let stopNunitProcess runNUnit =
     if runNUnit then

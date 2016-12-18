@@ -3,8 +3,5 @@ framework >= net46
 
 nuget NUnit
 nuget Unquote
-nuget System.Data.SQLite.Core
-nuget FluentMigrator
-nuget Dapper
-nuget FSharp.Data
 nuget FSharp.Core
+nuget FSharp.Configuration

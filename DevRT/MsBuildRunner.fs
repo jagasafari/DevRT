@@ -1,10 +1,10 @@
 module MsBuildRunner
 
-let run msBuild workingDirectory =
+let run msBuild sln workingDirectory =
     let msBuildStartInfo = 
         ProcessStartInfoProvider.getProcessStartInfo 
             msBuild 
-            "/m" 
+            (sprintf "%s /m" sln) 
             workingDirectory
 
     let msBuildOutputHandle, isMsBuildSuccessfull = 

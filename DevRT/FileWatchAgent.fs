@@ -1,20 +1,23 @@
 module FileWatchAgent
 
+open System
+
 let getFiles extensions dir =
     seq {
         for ext in extensions do
             let filePattern = sprintf "*.%s" ext
-            yield! System.IO.Directory.GetFiles(
-                dir, filePattern, System.IO.SearchOption.AllDirectories) 
+            yield! IO.Directory.GetFiles(
+                dir, filePattern, IO.SearchOption.AllDirectories) 
     }
 
-let getNow() = System.DateTime.Now
+let getNow() = DateTime.Now
 
-let getTimeLine (getNow: unit -> System.DateTime) forThePastSeconds =
-    getNow().AddSeconds( (-forThePastSeconds) |> float)
+let getTimeLine (getNow: unit -> DateTime) secondsInPast =
+    let now = getNow()
+    now.AddSeconds( (-secondsInPast) |> float)
 
 let getLastWriteTime filePath =
-    let fileInfo = System.IO.FileInfo filePath
+    let fileInfo = IO.FileInfo filePath
     fileInfo.LastWriteTime
 
 let isModified getTimeLine getLastWriteTime filePath =

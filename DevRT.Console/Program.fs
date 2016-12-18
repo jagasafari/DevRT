@@ -1,22 +1,14 @@
 ﻿module DevRT.Console
 
-let config = {
-    MsBuildPath =  @"c:\Program Files (x86)\MSBuild\14.0\Bin\MsBuild.exe"
-    DeploymentDir =  @"c:\run\nunit"
-    NUnitConsole = 
-        @"C:\Program Files (x86)\NUnit.org\nunit-console\nunit3-console.exe"
-    MsBuildWorkingDir =  @"c:\DevRT"
-    FileChangeWithinLastSeconds = 3
-    TestProjects = 
-        @"c:\DevRT\DevRT.Tests\bin\Debug", ["DevRT.Tests.dll"; "DevRT.Tests.dll"]
-    WatchedFilesExtenstions = ["fs";"fsproj"]
-    }
+open System
 
 [<EntryPoint>]
 let main argv =
-    let post = ExportApi.getPostToFileWatchAgent config
-    while true do
-        () |> post
-        System.Threading.Thread.Sleep 1000
-    System.Console.ReadKey() |> ignore
+
+    let post = 
+        ExportApi.getPostToFileWatchAgent 
+            Configuration.envConfig Configuration.slnConfig
+
+    while true do () |> post; Threading.Thread.Sleep 1000
+    Console.ReadKey() |> ignore
     0

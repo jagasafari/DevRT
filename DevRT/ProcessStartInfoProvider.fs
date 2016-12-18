@@ -1,7 +1,7 @@
 module ProcessStartInfoProvider
 
-open System.Diagnostics
 open System
+open System.Diagnostics
 open Common
 
 let getProcessStartInfo fileName arguments workingDir =
