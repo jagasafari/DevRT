@@ -4,21 +4,21 @@ open DevRT
 
 type Config = FSharp.Configuration.YamlConfig<"config.yaml">
 
-let config = Config()
+let initConfig() = Config()
 
-let envConfig = {
-    MsBuildPath = config.Environment.MsBuildPath 
-    NUnitConsole = config.Environment.NUnitConsole
-    DeploymentDir = config.Environment.DeploymentDir 
-    }
+let getEnvConfig (config: Config.Environment_Type) = {
+    MsBuildPath = config.MsBuildPath 
+    NUnitConsole = config.NUnitConsole
+    DeploymentDir = config.DeploymentDir }
 
-let slnConfig = {
-    FileChangeWithinLastSeconds 
-        = config.Solution.FileChangeWithinLastSeconds
-    WatchedFilesExtenstions = config.Solution.WatchedFilesExtenstions
-    MsBuildWorkingDir = config.Solution.MsBuildWorkingDir
+let getSlnConfig (config: Config.Solution_Type)  = {
+    MsBuildWorkingDir = config.MsBuildWorkingDir
     TestProjects = 
-       (config.Solution.TestProjectDirectory
-       , config.Solution.TestProjects |> Seq.toList)
-    SolutionFile = config.Solution.SolutionFile
-    }
+       (config.TestProjects.Directory
+       , config.TestProjects.Dlls |> Seq.toList)
+    SolutionFile = config.SolutionFile }
+
+let getFileWatchConfig 
+    (config: Config.Solution_Type.FileWatch_Type) = { 
+    ChangeWithinPastSeconds = config.ChangeWithinPastSeconds
+    ExcludedDirectories = config.ExcludedDirectories }

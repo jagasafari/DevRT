@@ -1,6 +1,6 @@
 module DevRT.ExportApi 
   
-let getPostToFileWatchAgent envConfig slnConfig = 
+let getPostToFileWatchAgent envConfig fileWatchConfig slnConfig = 
 
     let runMsBuild' () = 
         MsBuildRunner.run 
@@ -21,14 +21,16 @@ let getPostToFileWatchAgent envConfig slnConfig =
     let stepsRunAgent = Agent.createAgent ciStepsRunHandle ()
     stepsRunAgent.Error.Add(fun exn -> printfn "%A" exn)
 
-    let getFiles() = 
-        FileWatchAgent.getFiles 
-            slnConfig.WatchedFilesExtenstions slnConfig.MsBuildWorkingDir
+    let isBaseCase' = 
+        FileWatchAgent.isBaseCase fileWatchConfig.ExcludedDirectories
+
+    let getFiles() =
+        FileWatchAgent.getFiles isBaseCase' slnConfig.MsBuildWorkingDir
 
     let getTimeLine' () = 
         FileWatchAgent.getTimeLine 
             FileWatchAgent.getNow
-            slnConfig.FileChangeWithinLastSeconds
+            fileWatchConfig.ChangeWithinPastSeconds
 
     let isModified' = 
         FileWatchAgent.isModified 

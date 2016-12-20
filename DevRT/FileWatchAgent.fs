@@ -2,13 +2,22 @@ module FileWatchAgent
 
 open System
 
-let getFiles extensions dir =
+let enumerateFiles = IO.Directory.EnumerateFiles
+
+let enumerateDirectories = IO.Directory.EnumerateDirectories
+
+let contains (dir: string) excludedDirName = dir.Contains(excludedDirName)
+
+let isBaseCase excludedDirs contains =
+    excludedDirs |> Seq.exists contains
+
+let rec getFiles isBaseCase dir =
+    let bc = dir |> contains |> isBaseCase
     seq {
-        for ext in extensions do
-            let filePattern = sprintf "*.%s" ext
-            yield! IO.Directory.GetFiles(
-                dir, filePattern, IO.SearchOption.AllDirectories) 
-    }
+        if bc |> not then
+            yield! dir |> enumerateFiles
+            for d in dir |> enumerateDirectories do
+                yield! getFiles isBaseCase d }
 
 let getNow() = DateTime.Now
 

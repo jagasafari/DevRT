@@ -4,15 +4,21 @@ Environment:
         C:/Program Files (x86)/NUnit.org/nunit-console/nunit3-console.exe
     DeploymentDir: c:/run/nunit
 Solution:
-    FileChangeWithinLastSeconds: 3
-    WatchedFilesExtenstions: 
-    - fs
-    - fsproj
-    - sln
-    - yaml
+    FileWatch:
+        ChangeWithinPastSeconds: 3
+        ExcludedDirectories: 
+        - packages
+        - debug
+        - release
+        - bin
+        - obj
+        - .paket
+        - .git
+        - .vs
     MsBuildWorkingDir: c:/DevRT
-    TestProjectDirectory: c:/DevRT/DevRT.Tests/bin/Debug
-    TestProjects:
-    - DevRT.Tests
     SolutionFile: MyDev.sln
+    TestProjects:
+        Directory: c:/DevRT/DevRT.Tests/bin/Debug
+        Dlls:
+        - DevRT.Tests
     
