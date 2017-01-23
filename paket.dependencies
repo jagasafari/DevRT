@@ -5,3 +5,4 @@ nuget NUnit
 nuget Unquote
 nuget FSharp.Core
 nuget FSharp.Configuration
+nuget NLog

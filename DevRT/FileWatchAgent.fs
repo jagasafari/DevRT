@@ -1,12 +1,9 @@
-module FileWatchAgent
+module DevRT.FileWatchAgent
 
 open System
+open DevRT.IOWrapper
 
-let enumerateFiles = IO.Directory.EnumerateFiles
-
-let enumerateDirectories = IO.Directory.EnumerateDirectories
-
-let contains (dir: string) excludedDirName = dir.Contains(excludedDirName)
+let contains (str: string) substr = str.Contains(substr)
 
 let isBaseCase excludedDirs contains =
     excludedDirs |> Seq.exists contains
@@ -34,5 +31,4 @@ let isModified getTimeLine getLastWriteTime filePath =
 
 let handle getFiles isModified post () = 
     let isPost = getFiles() |> Seq.exists isModified
-    
     if isPost then () |> post

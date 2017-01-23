@@ -2,7 +2,7 @@ module FileWatchAgentTests
 
 open NUnit.Framework
 open Swensen.Unquote
-open FileWatchAgent
+open DevRT.FileWatchAgent
 
 let getNow () = System.DateTime(2016, 11, 21, 13, 10, 55)
 

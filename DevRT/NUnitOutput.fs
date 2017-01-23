@@ -1,7 +1,7 @@
-module NUnitOutput
+module DevRT.NUnitOutput
 
-open Common
-open DevRT
+open DataTypes
+open ConsoleOutput
 
 let contains pattern (str: string) = str.Contains pattern
 let isSummary data = contains "Duration:" data || contains "Test Count:" data

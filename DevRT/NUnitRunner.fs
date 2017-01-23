@@ -1,11 +1,11 @@
-module NUnitRunner
+module DevRT.NUnitRunner
 
 open System
-open Common
-open DevRT
+open System.IO
+open DataTypes
+open FileUtil
 open ProcessRunner
 open ProcessStartInfoProvider
-open System.IO
 
 let killProcess sleep (p:Diagnostics.Process) = p.Kill(); sleep()
 
@@ -24,7 +24,7 @@ let copyBuildOutput deploymentDir (outputDir: string) =
     let tar = outputDir.Split('/')
     let ta = tar.[2]
     let target = Path.Combine(deploymentDir, ta)
-    copyAllFiles outputDir target
+    copyAllFiles outputDir target |> ignore
     target
 
 let runTest handleOutput nunitConsole dllDirectory dllFile =

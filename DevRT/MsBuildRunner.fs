@@ -1,4 +1,4 @@
-module MsBuildRunner
+module DevRT.MsBuildRunner
 
 let run msBuild sln workingDirectory =
     let msBuildStartInfo = 

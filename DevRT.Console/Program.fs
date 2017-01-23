@@ -5,6 +5,7 @@ open Configuration
 
 [<EntryPoint>]
 let main argv =
+    DevRT.Logging.info "kfj"
     let config = initConfig()
     let envConfig = getEnvConfig (config.Environment)
     let slnConfig = getSlnConfig (config.Solution)

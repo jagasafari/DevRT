@@ -1,7 +1,7 @@
-module ProcessRunner
+module DevRT.ProcessRunner
 
 open System.Diagnostics
-open Common
+open ConsoleOutput
 
 let run processStartInfo handleOutput =
     use proc = new Process(StartInfo = processStartInfo)
