@@ -32,18 +32,18 @@ let runTest handleOutput nunitConsole dllDirectory dllFile =
     ProcessRunner.run startInfo handleOutput
 
 let runTests handleOutput nunitConsole outputDirectory testProjects =
+    testProjects |> sprintf "running tests: %A" |> Logging.info
     testProjects
     |> Seq.iter ( fun tp ->
         let dllName = sprintf "%s.dll" tp 
         let dllFile = Path.Combine(outputDirectory, dllName)
         runTest handleOutput nunitConsole outputDirectory dllFile )
-let run 
-    (outputDir, testProjects: string seq) 
+
+let prepareAndRunTests
     runnerDir 
-    deploymentDir 
-    buildDir = function
-    | false -> ()
-    | true ->
+    deploymentDir
+    = function
+    | RunTestsOn (directory, dlls) ->
         let outputHandler = NUnitOutputHandler()
         let handle = 
             outputHandler.Handle 
@@ -53,5 +53,12 @@ let run
                 (getProcesses "nunit-agent") (killProcess (sleep 500))
         cleanDeploymentDir deploymentDir
         let outputDirectory = 
-            copyBuildOutput deploymentDir outputDir
-        runTests handle runnerDir outputDirectory testProjects
+            copyBuildOutput deploymentDir directory
+        runTests handle runnerDir outputDirectory dlls
+    | _ -> ()
+    
+let run testProjectsAndOutputDir runnerDir deploymentDir 
+    = function
+    | BuildSucceeded ->
+        prepareAndRunTests runnerDir deploymentDir testProjectsAndOutputDir
+    | BuildFailed | _   -> ()

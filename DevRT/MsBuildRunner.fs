@@ -9,7 +9,7 @@ let run msBuild sln workingDirectory =
 
     let msBuildOutputHandle, isMsBuildSuccessfull = 
         MsBuildOutput.createMsBuildHandle()
-
+    System.DateTime.Now |> sprintf "%O" |> Logging.info
     ProcessRunner.run msBuildStartInfo msBuildOutputHandle
 
     isMsBuildSuccessfull()

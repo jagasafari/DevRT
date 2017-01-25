@@ -18,5 +18,5 @@ let processOutput updateStatus = function
 let createMsBuildHandle() =
     let handler = MsBuildOutputHandler()
     let handleMsBuildOutput = handler.Handle getUpdatedStatus processOutput
-    let isMsBuildSuccess() = handler.BuildStatus = BuildSucceeded
-    handleMsBuildOutput, isMsBuildSuccess 
+    let getBuildStatus() = handler.BuildStatus
+    handleMsBuildOutput, getBuildStatus 

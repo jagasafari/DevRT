@@ -1,6 +1,6 @@
 $runningProcess = Get-Process -name DevRT.Console -ErrorAction SilentlyContinue
 if($runningProcess) { Stop-Process -name DevRT.Console }
-Remove-Item c:\run\RtFeedback.Console\* 
+Remove-Item c:\run\RtFeedback.Console\* -Recurse
 Copy-Item c:\DevRT\DevRT.Console\bin\Debug\* c:\run\RtFeedback.Console -Recurse
 cd c:\run\RtFeedback.Console
 .\DevRT.Console.exe

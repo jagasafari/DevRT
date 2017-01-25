@@ -5,10 +5,12 @@ type EnvironmentConfig = {
     NUnitConsole: string
     DeploymentDir: string }
 
+type TestProjects = | RunTestsOn of (string * string list) | RunTestsOff
+
 [<NoComparison>]
 type SolutionConfig = {
     MsBuildWorkingDir: string
-    TestProjects: (string * string list)
+    TestProjects: TestProjects
     SolutionFile: string
 }
 

@@ -13,7 +13,6 @@ let getPostToFileWatchAgent envConfig fileWatchConfig slnConfig =
             slnConfig.TestProjects
             envConfig.NUnitConsole 
             envConfig.DeploymentDir 
-            slnConfig.MsBuildWorkingDir 
 
     let ciStepsRunHandle = 
         CiStepsRunAgent.handle runMsBuild' runNUnit'
@@ -41,7 +40,6 @@ let getPostToFileWatchAgent envConfig fileWatchConfig slnConfig =
             getFiles
             isModified' 
             stepsRunAgent.Post
-
 
     let fileWatchAgent = Agent.createAgent fileWatchHandle () 
 

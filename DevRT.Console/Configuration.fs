@@ -11,12 +11,18 @@ let getEnvConfig (config: Config.Environment_Type) = {
     NUnitConsole = config.NUnitConsole
     DeploymentDir = config.DeploymentDir }
 
-let getSlnConfig (config: Config.Solution_Type)  = {
-    MsBuildWorkingDir = config.MsBuildWorkingDir
-    TestProjects = 
-       (config.TestProjects.Directory
-       , config.TestProjects.Dlls |> Seq.toList)
-    SolutionFile = config.SolutionFile }
+let getTestProjectConfig (config: Config.Solution_Type.TestProjects_Type) =
+    match config.TestsOn with
+    | true -> RunTestsOff 
+    | false -> (config.Directory, config.Dlls |> Seq.toList) |> RunTestsOn
+    
+let getSlnConfig (config: Config.Solution_Type) =
+    let slnConfig = {
+        MsBuildWorkingDir = config.MsBuildWorkingDir
+        TestProjects = getTestProjectConfig config.TestProjects 
+        SolutionFile = config.SolutionFile }
+    slnConfig |> Logging.info
+    slnConfig
 
 let getFileWatchConfig 
     (config: Config.Solution_Type.FileWatch_Type) = { 

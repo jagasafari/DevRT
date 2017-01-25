@@ -21,5 +21,5 @@ type NUnitOutputHandler() =
 
     member x.Handle getUpdatedStatus filterOutput data =
         status <- getUpdatedStatus status data
-        filterOutput data status   
+        filterOutput data status
 

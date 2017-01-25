@@ -18,6 +18,7 @@ Solution:
     MsBuildWorkingDir: c:/DevRT
     SolutionFile: MyDev.sln
     TestProjects:
+        TestsOn: true
         Directory: c:/DevRT/DevRT.Tests/bin/Debug
         Dlls:
         - DevRT.Tests
