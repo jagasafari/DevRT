@@ -1,18 +1,20 @@
 module DevRT.FileUtil
 
-open System
-open IOWrapper
-open DataTypes
-
 let doCopy createPath get copy =
     get() |> Seq.iter (fun x -> x |> createPath |> copy x |> ignore)
 
-let rec copyAllFiles source dest =
-    dest |> createDirectory
+let copyAllFiles createDirectory copyFiles copySubdirectories source dest =
+    let rec copyAllFiles' source dest =
+        dest |> createDirectory
+        copyFiles source dest
+        copySubdirectories copyAllFiles' source dest
+    copyAllFiles' source dest
 
-    let createPath' = dest |> createPath
-    doCopy createPath' (source |> getFiles) copyFile
-    doCopy createPath' (source |> getDirectories) copyAllFiles
-
-let deleteAllFiles target = 
+let deleteAllFiles exists deleteRecursive target =
     if target |> exists then target |> deleteRecursive
+
+let cleanDirectory deleteAllFiles createDirectory deploymentDir =
+    deploymentDir |> deleteAllFiles
+    deploymentDir |> createDirectory
+
+

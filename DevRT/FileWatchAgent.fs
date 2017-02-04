@@ -1,22 +1,21 @@
 module DevRT.FileWatchAgent
 
 open System
-open DevRT.IOWrapper
+open Common
+open IOWrapper
+open StringWrapper
 
-let contains (str: string) substr = str.Contains(substr)
-
-let isBaseCase excludedDirs contains =
-    excludedDirs |> Seq.exists contains
+let isBaseCase excludedDirs dir =
+    excludedDirs |> Seq.exists(fun x -> contains x dir)
 
 let rec getFiles isBaseCase dir =
-    let bc = dir |> contains |> isBaseCase
+    let bc = dir |> isBaseCase
     seq {
         if bc |> not then
             yield! dir |> enumerateFiles
             for d in dir |> enumerateDirectories do
                 yield! getFiles isBaseCase d }
 
-let getNow() = DateTime.Now
 
 let getTimeLine (getNow: unit -> DateTime) secondsInPast =
     let now = getNow()
@@ -27,8 +26,11 @@ let getLastWriteTime filePath =
     fileInfo.LastWriteTime
 
 let isModified getTimeLine getLastWriteTime filePath =
-    (getLastWriteTime filePath) > (getTimeLine())
+    let modified = (getLastWriteTime filePath) > (getTimeLine())
+    if modified then
+        "modification found %s" %% filePath |> Logging.info
+    modified
 
-let handle getFiles isModified post () = 
+let handle getFiles isModified post () =
     let isPost = getFiles() |> Seq.exists isModified
     if isPost then () |> post

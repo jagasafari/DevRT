@@ -1,7 +1,6 @@
 module DevRT.ConsoleOutput
 
 open System
-open System.IO
 
 let writeEmptyLine () = Console.WriteLine ()
 
@@ -11,13 +10,17 @@ let writeline (str: string) = Console.WriteLine str
 
 let writeColor write color (str:string) =
     Console.ForegroundColor <- color; write str; Console.ResetColor()
-    
-let writeColorLine = writeColor writeline 
 
-let writelineRed = writeColorLine ConsoleColor.Red 
+let writeColorLine = writeColor writeline
 
-let writelinePurple = writeColorLine ConsoleColor.DarkMagenta 
+let writelineRed = writeColorLine ConsoleColor.Red
 
-let writelineYellow = writeColorLine ConsoleColor.Yellow 
+let writelinePurple = writeColorLine ConsoleColor.DarkMagenta
 
-let appendToLinePurple = writeColor write ConsoleColor.DarkMagenta 
+let writelineDarkCyan = writeColorLine ConsoleColor.DarkCyan
+
+let writelineDarkGreen = writeColorLine ConsoleColor.DarkGreen
+
+let writelineYellow = writeColorLine ConsoleColor.Yellow
+
+let appendToLinePurple = writeColor write ConsoleColor.DarkMagenta

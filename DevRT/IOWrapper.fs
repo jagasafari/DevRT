@@ -1,6 +1,5 @@
 module DevRT.IOWrapper
 
-open System
 open System.IO
 
 let createDirectory = Directory.CreateDirectory >> ignore

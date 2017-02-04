@@ -1,6 +1,5 @@
 module DevRT.Common
 
-type Result<'a, 'b> = | Success of 'a | Failure of 'b
+open System
 
-let bindResult f input =
-    try input |> f |> Success with ex -> Failure ex
+let getNow() = DateTime.Now

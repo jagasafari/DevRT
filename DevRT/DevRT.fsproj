@@ -44,19 +44,17 @@
     <Compile Include="ContractDataTypes.fs" />
     <Compile Include="DataTypes.fs" />
     <Compile Include="IOWrapper.fs" />
+    <Compile Include="StringWrapper.fs" />
+    <Compile Include="ProcessWrapper.fs" />
+    <Compile Include="Common.fs" />
     <Compile Include="Logging.fs" />
     <Compile Include="FileUtil.fs" />
-    <Compile Include="Common.fs" />
     <Compile Include="ConsoleOutput.fs" />
-    <Compile Include="MsBuildOutput.fs" />
-    <Compile Include="NUnitOutput.fs" />
-    <Compile Include="ProcessStartInfoProvider.fs" />
     <Compile Include="ProcessRunner.fs" />
-    <Compile Include="MsBuildRunner.fs" />
-    <Compile Include="NUnitRunner.fs" />
+    <Compile Include="MsBuild.fs" />
+    <Compile Include="NUnit.fs" />
     <Compile Include="Agent.fs" />
     <Compile Include="FileWatchAgent.fs" />
-    <Compile Include="CiStepsRunAgent.fs" />
     <Compile Include="ExportApi.fs" />
   </ItemGroup>
   <ItemGroup>
