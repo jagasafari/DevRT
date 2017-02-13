@@ -44,6 +44,9 @@
     <None Include="App.config" />
     <Compile Include="Common.fs" />
     <Compile Include="ProcessWrapperTests.fs" />
+    <Compile Include="RunTests.fs" />
+    <Compile Include="RefactorTests.fs" />
+    <Compile Include="NUnitTests.fs" />
     <Compile Include="FileUtilTests.fs" />
     <Compile Include="FileWatchAgentTests.fs" />
   </ItemGroup>

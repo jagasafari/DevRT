@@ -55,6 +55,8 @@
     <Compile Include="NUnit.fs" />
     <Compile Include="Agent.fs" />
     <Compile Include="FileWatchAgent.fs" />
+    <Compile Include="Refactor.fs" />
+    <Compile Include="Run.fs" />
     <Compile Include="ExportApi.fs" />
   </ItemGroup>
   <ItemGroup>

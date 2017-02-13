@@ -6,14 +6,14 @@ open Common
 open DevRT.FileUtil
 
 let doCopyTest elements =
-    let result = TestResult()
+    let mockAdd, mockResult = mock()
     let createPath x =
-        result.Add (sprintf "createPath %s" x)
+        mockAdd (sprintf "createPath %s" x)
         "y"
-    let copy x y = result.Add (sprintf "copy %s %s" x y)
+    let copy x y = mockAdd (sprintf "copy %s %s" x y)
     let get = fun () -> elements
     doCopy createPath get copy
-    result.Result
+    mockResult()
 
 [<Test>]
 let ``doCopy when nothing to copy`` () =
@@ -25,14 +25,14 @@ let ``doCopy when one element`` () =
 
 let copyAllFilesTest recLevel =
     let mutable rl = recLevel
-    let result = TestResult()
-    let createDirectory dest = result.Add (sprintf "createdirectory %d" dest)
-    let copyFiles source dest = result.Add (sprintf "copyFiles %d %d" source dest)
+    let mockAdd, mockResult = mock()
+    let createDirectory dest = mockAdd (sprintf "createdirectory %d" dest)
+    let copyFiles source dest = mockAdd (sprintf "copyFiles %d %d" source dest)
     let copySubdirectories cf source dest =
         match rl with | l when l > 0 -> rl <- (rl - 1); cf rl rl | _ -> ()
     copyAllFiles createDirectory copyFiles copySubdirectories 44 66
-    result.Result
-    
+    mockResult()
+
 [<Test>]
 let ``copyAllFiles when rec level 0`` () =
     copyAllFilesTest 0 =! ["createdirectory 66"; "copyFiles 44 66"]
@@ -48,13 +48,12 @@ let ``copyAllFiles when rec level 1`` () =
 [<Test>]
 let ``deleteAllFiles when target does not exists`` () =
     let exists _ = false
-    let deleteRecursive _ = failwith "test fails"
-    deleteAllFiles exists deleteRecursive ()
+    deleteAllFiles exists shouldNotBeCalled ()
 
 [<Test>]
 let ``deleteAllFiles when target does exists`` () =
-    let result = TestResult()
+    let mockAdd, mockResult = mock()
     let exists _ = true
-    let deleteRecursive _ = result.Add "delete"
+    let deleteRecursive _ = mockAdd "delete"
     deleteAllFiles exists deleteRecursive ()
-    result.Result =! ["delete"]
+    mockResult() =! ["delete"]

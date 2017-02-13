@@ -17,18 +17,39 @@ let createStatus() =
     status.Update, fun () -> status.Status
 
 let isSummary data = contains "Duration:" data || contains "Test Count:" data
-let isRunSettings = contains "Run Settings"
-let isTestFailerInfo = contains ") Failed :"
+let isTestFailerInfo str = contains ") Failed :" str || contains ") Invalid :" str
+let isFailureLineNumber = contains ":wiersz"
+let isNoise (str:string) =
+    str |> startsWith " "
+    || contains "Run Settings" str
+    || str |> startsWith "NUnit Console"
+    || str |> startsWith "Copyright"
+    || str = Environment.NewLine
+    || str |> isNullOrWhiteSpace
+    || str |> startsWith "Test"
+    || str |> startsWith "Results"
+    || str |> startsWith "Runtime"
+    || str |> startsWith "Errors and Failures"
 
 let getUpdatedStatus currentStatus = function
     | d when isSummary d -> Summary
-    | d when isRunSettings d -> Noise
     | d when isTestFailerInfo d -> Failure
+    | d when isFailureLineNumber d -> FailureLineInfo
     | _ when currentStatus = Failure -> currentStatus
-    | _ -> Noise
+    | d when isNoise d -> Noise
+    | _ -> Failure
 
-let handleOutput handleSummary handleFailure = function
-    | Summary -> handleSummary | Failure -> handleFailure | _ -> fun _ -> ()
+let parseFailureLineNumberInfo text =
+    text |> splitByString " w" |> Array.last
+
+let writeFailureLineNumberInfo write text =
+    text |> parseFailureLineNumberInfo |> write
+
+let handleOutput handleSummary handleFailure handleFailureLineInfo = function
+    | Summary -> handleSummary
+    | Invalid | Failure -> handleFailure
+    | FailureLineInfo -> handleFailureLineInfo
+    | _ -> fun _ -> ()
 
 let getTestDirectoryName outputDir =
     let parts = split '/' outputDir

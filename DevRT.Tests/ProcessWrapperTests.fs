@@ -9,9 +9,9 @@ open DevRT.ProcessWrapper
 
 [<Test>]
 let ``stop nunit process when the previous step completed`` () =
-    let testResult = TestResult()
-    let getProcesses() = testResult.Add "getProcesses"; [1..3]
-    let killProcess p = testResult.Add "killProcess"
+    let mockAdd, mockResult = mock()
+    let getProcesses() = mockAdd "getProcesses"; [1..3]
+    let killProcess p = mockAdd "killProcess"
     stopNunitProcess getProcesses killProcess |> ignore
-    testResult.Result
+    mockResult()
     =! ["getProcesses";"killProcess";"killProcess";"killProcess"]
