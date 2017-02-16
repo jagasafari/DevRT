@@ -4,9 +4,11 @@ let createAgentWithErrorHandling log handle initState =
     let agent =
         MailboxProcessor.Start(fun inbox ->
             let rec messageLoop state = async {
-                let! msg = inbox.Receive()
-                let state = msg |> handle
-                return! messageLoop state
+                try
+                    let! msg = inbox.Receive()
+                    let state = msg |> handle
+                    return! messageLoop state
+                with exn -> exn |> log
             }
             messageLoop initState
         )
