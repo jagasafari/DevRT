@@ -6,27 +6,28 @@ type Config = FSharp.Configuration.YamlConfig<"config.yaml">
 
 let initConfig() = Config()
 
-let getEnvConfig (config: Config.Environment_Type) = {
-    MsBuildPath = config.MsBuildPath
-    NUnitConsole = config.NUnitConsole
-    DeploymentDir = config.DeploymentDir }
-
-let getTestProjectConfig (config: Config.Solution_Type.TestProjects_Type) =
+let getTestProjectConfig (config: Config.NUnit_Type.TestProjects_Type) =
     match config.TestsOn with
     | false -> RunTestsOff
     | true -> (config.Directory, config.Dlls |> Seq.toList) |> RunTestsOn
 
-let getSlnConfig (config: Config.Solution_Type) =
-    let slnConfig = {
-        MsBuildWorkingDir = config.MsBuildWorkingDir
-        TestProjects = getTestProjectConfig config.TestProjects
-        SolutionFile = config.SolutionFile }
-    slnConfig |> Logging.info
-    slnConfig
-
-let getFileWatchConfig
-    (config: Config.Solution_Type.FileWatch_Type) =
-    Logging.info config.ExcludedDirectories
+let getFileWatchConfig log (config: Config) =
+    log config.FileWatch.ExcludedDirectories
     {
-    ChangeWithinPastSeconds = config.ChangeWithinPastSeconds
-    ExcludedDirectories = config.ExcludedDirectories }
+    SleepMilliseconds = config.FileWatch.SleepMiliseconds
+    ExcludedDirectories = config.FileWatch.ExcludedDirectories
+    MsBuildWorkingDir = config.Solution.MsBuildWorkingDir}
+
+let getNUnitConfig (config: Config) =
+    {
+    TestProjects = config.NUnit.TestProjects |> getTestProjectConfig
+    NUnitConsole = config.Environment.NUnitConsole
+    DeploymentDir = config.Environment.DeploymentDir }
+
+let getMsBuildConfig (config: Config) =
+    {
+    MsBuildPath = config.Environment.MsBuildPath
+    MsBuildWorkingDir = config.Solution.MsBuildWorkingDir
+    SolutionFile = config.Solution.SolutionFile}
+
+

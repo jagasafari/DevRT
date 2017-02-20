@@ -43,6 +43,7 @@
     <None Include="paket.references" />
     <None Include="App.config" />
     <Compile Include="Common.fs" />
+    <Compile Include="StringWrapperTests.fs" />
     <Compile Include="ProcessWrapperTests.fs" />
     <Compile Include="RunTests.fs" />
     <Compile Include="RefactorTests.fs" />

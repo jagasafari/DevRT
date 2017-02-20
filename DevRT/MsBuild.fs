@@ -3,14 +3,10 @@ module DevRT.MsBuild
 open DataTypes
 open StringWrapper
 
-type private MsBuildStatus() =
-    let mutable buildStatus = Starting
-    member x.Update newStatus = buildStatus <- newStatus
-    member x.BuildStatus with get() = buildStatus
-
 let createMsBuildStatus () =
-    let handler = MsBuildStatus()
-    handler.Update, fun () -> handler.BuildStatus
+    let mutable status = Starting
+    let update newStatus = status <- newStatus
+    update, fun () -> status
 
 let getContinuationStatus = function | Starting -> Building | x -> x
 

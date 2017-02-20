@@ -1,20 +1,12 @@
 module DevRT.NUnit
 
 open System
+open Common
 open DataTypes
 open FileUtil
 open IOWrapper
 open ProcessWrapper
 open StringWrapper
-
-type private NUnitStatus() =
-    let mutable status = Noise
-    member x.Update newStatus = status <- newStatus
-    member x.Status with get() = status
-
-let createStatus() =
-    let status = NUnitStatus()
-    status.Update, fun () -> status.Status
 
 let isSummary data = contains "Duration:" data || contains "Test Count:" data
 let isTestFailerInfo str = contains ") Failed :" str || contains ") Invalid :" str
@@ -65,7 +57,7 @@ let copyBuildOutput log source target =
     copyAllFiles' source target |> ignore
 
 let handle getUpdatedStatus handleOutput data =
-    let update, getStatus = createStatus()
+    let update, getStatus = createStatus Noise
     data |> getUpdatedStatus (getStatus()) |> update
     data |> handleOutput (getStatus())
 

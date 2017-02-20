@@ -14,7 +14,7 @@ let ``run: n times -> file watch executed n times`` n =
     let post() = mockAdd "posting"
     let postToRefactor key =
         key |> sprintf "posting key: %A" |> mockAdd
-    run post postToRefactor |> Seq.take n |> Seq.toList |> ignore
+    run 1 post postToRefactor |> Seq.take n |> Seq.toList |> ignore
     mockResult().Length =! n
 
 [<Test>]

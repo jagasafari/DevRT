@@ -1,12 +1,13 @@
 module DevRT.FileWatchAgent
 
 open System
+open DataTypes
 open Common
 open IOWrapper
 open StringWrapper
 
 let isBaseCase excludedDirs dir =
-    excludedDirs |> Seq.exists(fun x -> contains x dir)
+    excludedDirs |> Seq.exists(fun x -> containsCaseInsensitive x dir)
 
 let rec getFiles isBaseCase dir =
     let bc = dir |> isBaseCase
@@ -16,21 +17,20 @@ let rec getFiles isBaseCase dir =
             for d in dir |> enumerateDirectories do
                 yield! getFiles isBaseCase d }
 
-
-let getTimeLine (getNow: unit -> DateTime) secondsInPast =
+let internal getTimeLine (getNow: unit -> DateTime) sleepMiliseconds =
     let now = getNow()
-    now.AddSeconds( (-secondsInPast) |> float)
+    let delay = 100
+    (-(sleepMiliseconds + delay)) |> float |> now.AddMilliseconds
 
-let getLastWriteTime filePath =
-    let fileInfo = IO.FileInfo filePath
-    fileInfo.LastWriteTime
+let internal getLastWriteTime filePath = (IO.FileInfo filePath).LastWriteTime
 
-let isModified getTimeLine getLastWriteTime filePath =
-    let modified = (getLastWriteTime filePath) > (getTimeLine())
-    if modified then
-        "modification found %s" %% filePath |> Logging.info
-    modified
+let internal isNewModification getTimeLine getLastWriteTime filePath =
+    (filePath |> getLastWriteTime) > (getTimeLine())
 
-let handle getFiles isModified post () =
-    let isPost = getFiles() |> Seq.exists isModified
-    if isPost then () |> post
+let handle getFiles isNewModification post postModifiedFile () =
+    match getFiles() |> Seq.tryFind isNewModification with
+    | None -> ()
+    | Some file ->
+        "modification found %s" %% file |> Logging.info
+        post()
+        file |> QueueModifiedFile |> postModifiedFile

@@ -7,13 +7,12 @@ open Configuration
 let main argv =
     DevRT.Logging.info "kfj"
     let config = initConfig()
-    let envConfig = getEnvConfig (config.Environment)
-    let slnConfig = getSlnConfig (config.Solution)
-    let fileWatchConfig = getFileWatchConfig (config.Solution.FileWatch)
+    let fileWatchConfig = getFileWatchConfig Logging.info config
+    let nUnitConfig = getNUnitConfig config
+    let msBuildConfig = getMsBuildConfig config
 
     let run =
-        ExportApi.getPostToFileWatchAgent
-            envConfig fileWatchConfig slnConfig
+        ExportApi.getPostToFileWatchAgent fileWatchConfig nUnitConfig msBuildConfig
 
     () |> run |> ignore
     Console.ReadKey() |> ignore

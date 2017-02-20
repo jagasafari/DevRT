@@ -1,28 +1,29 @@
 module DevRT.Run
 
 open System
+open DataTypes
 
-type RunAction = | CheckKeyPressed | HandleKeyPressed | RunCi | RunRefactor
-
-let infiniteLoop action =
+let infiniteLoop (sleepMilliseconds: int) action =
     let rec infinite() =
-        seq { yield action(); yield! infinite() }
+        seq {
+            yield action(); Threading.Thread.Sleep sleepMilliseconds; yield! infinite() }
     infinite()
 
 let action postRunCi postRefactor () =
     let rec actionRec = function
-        | RunCi -> postRunCi(); Threading.Thread.Sleep 1000
-        | RunRefactor -> postRefactor(); Threading.Thread.Sleep 2000
+        | RunCi -> postRunCi()
+        | RunRefactor -> RefactorModifiedFiles |> postRefactor
         | CheckKeyPressed ->
             match Console.KeyAvailable with
             | true -> HandleKeyPressed |> actionRec
             | false -> RunCi |> actionRec
         | HandleKeyPressed ->
             let key = Console.ReadKey(true)
+            printfn "key pressed: %A" key.Key
             match key.Key with
             | ConsoleKey.R -> RunRefactor |> actionRec
             | _ -> RunCi |> actionRec
     actionRec CheckKeyPressed
 
-
-let run postRunCi postRefactor = action postRunCi postRefactor |> infiniteLoop
+let run sleepMilliseconds postRunCi postRefactor =
+    action postRunCi postRefactor |> infiniteLoop sleepMilliseconds

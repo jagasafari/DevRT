@@ -12,10 +12,8 @@ let createAgentWithErrorHandling log handle initState =
             }
             messageLoop initState
         )
-    agent.Error.Add(fun exn ->
-        exn |> printfn "%A"
-        exn |> log)
+    agent.Error.Add(fun exn -> exn |> log)
     agent
 
-let createAgent handle initState =
-    createAgentWithErrorHandling Logging.error handle initState
+let createAgent logError handle initState =
+    createAgentWithErrorHandling logError handle initState

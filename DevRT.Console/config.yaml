@@ -3,21 +3,23 @@ Environment:
     NUnitConsole:
         C:/Program Files (x86)/NUnit.org/nunit-console/nunit3-console.exe
     DeploymentDir: c:/run/nunit
+FileWatch:
+    SleepMiliseconds: 1000
+    ExcludedDirectories:
+    - packages
+    - debug
+    - release
+    - bin
+    - obj
+    - .paket
+    - .git
+    - .vs
+    - logs
+    - out
 Solution:
-    FileWatch:
-        ChangeWithinPastSeconds: 1
-        ExcludedDirectories:
-        - packages
-        - debug
-        - release
-        - bin
-        - obj
-        - .paket
-        - .git
-        - .vs
-        - logs
     MsBuildWorkingDir: c:/DevRT
     SolutionFile: MyDev.sln
+NUnit:
     TestProjects:
         TestsOn: true
         Directory: c:/DevRT/DevRT.Tests/bin/Debug

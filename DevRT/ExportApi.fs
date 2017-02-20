@@ -8,19 +8,29 @@ open FileUtil
 open IOWrapper
 open ProcessRunner
 open MsBuild
+open Refactor
 open StringWrapper
 
-let composeNUnitHandle envConfig testProjects =
+let createAgent' handle =
+    let logError e = e |> printfn "%A"; e |> Logging.error
+    Agent.createAgent logError handle
+
+let composeNUnitHandle (nUnitConfig: NUnitConfig) =
     let handleOutput' =
-        NUnit.handleOutput writelineDarkCyan writelineYellow (NUnit.writeFailureLineNumberInfo writelineYellow)
+        NUnit.handleOutput
+            writelineDarkCyan
+            writelineYellow
+            (NUnit.writeFailureLineNumberInfo writelineYellow)
     let handle' = NUnit.handle NUnit.getUpdatedStatus handleOutput'
     let deleteAllFiles' = deleteAllFiles exists deleteRecursive
     let cleanDirectory'() =
-        cleanDirectory deleteAllFiles' createDirectory envConfig.DeploymentDir
-    let getProcessStartInfo' = getProcessStartInfo envConfig.NUnitConsole
+        cleanDirectory deleteAllFiles' createDirectory nUnitConfig.DeploymentDir
+    let getProcessStartInfo' = getProcessStartInfo nUnitConfig.NUnitConsole
     let getOutputDirectory dllsSource =
             let outputDirectory =
-                dllsSource |> NUnit.getTestDirectoryName |> combine envConfig.DeploymentDir
+                dllsSource
+                |> NUnit.getTestDirectoryName
+                |> combine nUnitConfig.DeploymentDir
             outputDirectory
     let run' startInfo = ProcessRunner.run startInfo handle'
     let prepareAndRunTests() =
@@ -29,16 +39,16 @@ let composeNUnitHandle envConfig testProjects =
             getProcessStartInfo'
             getOutputDirectory
             run'
-            testProjects
+            nUnitConfig.TestProjects
     NUnit.run prepareAndRunTests
 
-let runMsBuild' slnConfig msBuildPath post () =
+let runMsBuild' (msBuildConfig: MsBuildConfig) post () =
     let getMsBuildStartInfo() =
         getProcessStartInfo
-            msBuildPath
-            (getRunArgsString slnConfig.SolutionFile)
-            slnConfig.MsBuildWorkingDir
-    let update, getStatus = createMsBuildStatus()
+            msBuildConfig.MsBuildPath
+            (getRunArgsString msBuildConfig.SolutionFile)
+            msBuildConfig.MsBuildWorkingDir
+    let update, getStatus = createStatus Starting
     let getContinuationStatus' = getStatus >> getContinuationStatus
     let updateStatus = (getUpdatedStatus contains getContinuationStatus') >> update
     let handleStarting' = handleStarting writelineDarkGreen getNow updateStatus
@@ -48,32 +58,27 @@ let runMsBuild' slnConfig msBuildPath post () =
     let run' = run getMsBuildStartInfo
     runMSBuild processOutput' run' getStatus post
 
-let runFileWatch stepsRunAgentPost fileWatchConfig msBuildWorkingDir =
+let runFileWatch (config: FileWatchConfig) =
     let getFiles() =
-         msBuildWorkingDir
+         config.MsBuildWorkingDir
          |> FileWatchAgent.getFiles
-             (fileWatchConfig.ExcludedDirectories |> FileWatchAgent.isBaseCase)
+             (config.ExcludedDirectories |> FileWatchAgent.isBaseCase)
     let getTimeLine' () =
-        FileWatchAgent.getTimeLine
-            getNow
-            fileWatchConfig.ChangeWithinPastSeconds
-    let isModified' =
-         FileWatchAgent.getLastWriteTime
-         |> FileWatchAgent.isModified getTimeLine'
-    let fileWatchHandle =
-        FileWatchAgent.handle getFiles isModified' stepsRunAgentPost
-    fileWatchHandle
+        FileWatchAgent.getTimeLine getNow config.SleepMilliseconds
+    let isNewModification' =
+        FileWatchAgent.isNewModification getTimeLine' FileWatchAgent.getLastWriteTime
+    FileWatchAgent.handle getFiles isNewModification'
 
-let getPostToFileWatchAgent envConfig fileWatchConfig slnConfig =
-    let nUnitHandle = composeNUnitHandle envConfig slnConfig.TestProjects
-    let nUnitAgent = Agent.createAgent nUnitHandle ()
-    let msBuildHandle = runMsBuild' slnConfig envConfig.MsBuildPath nUnitAgent.Post
-    let stepsRunAgent = Agent.createAgent msBuildHandle ()
+let getPostToFileWatchAgent fileWatchConfig nUnitConfig msBuildConfig =
+    let nUnitHandle = composeNUnitHandle nUnitConfig
+    let nUnitAgent = createAgent' nUnitHandle ()
+    let msBuildHandle = runMsBuild' msBuildConfig nUnitAgent.Post
+    let msBuildAgent = createAgent' msBuildHandle ()
+    let refactorAgent = createAgent' getRefactorHandle ()
     let fileWatchHandle =
-        runFileWatch stepsRunAgent.Post fileWatchConfig slnConfig.MsBuildWorkingDir
-    let fileWatchAgent = Agent.createAgent fileWatchHandle ()
-    let refactorHandle () = ()
-    let refactorAgent = Agent.createAgent refactorHandle ()
-    let run () = Run.run fileWatchAgent.Post refactorAgent.Post |> Seq.toList
+        runFileWatch fileWatchConfig msBuildAgent.Post refactorAgent.Post
+    let fileWatchAgent = createAgent' fileWatchHandle ()
+    let run () =
+        Run.run fileWatchConfig.SleepMilliseconds fileWatchAgent.Post refactorAgent.Post
+        |> Seq.toList
     run
-
