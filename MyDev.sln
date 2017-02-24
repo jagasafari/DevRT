@@ -15,8 +15,6 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DevRT.Tests", "DevRT.Tests\
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DevRT.Console", "DevRT.Console\DevRT.Console.fsproj", "{0554B12E-C406-40A2-805A-1587D915FB4D}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DevRT.Console.Tests", "DevRT.Console\DevRT.Console.Tests.fsproj", "{968cbc80-d0ea-438c-86f3-2eb3b591ef8a}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

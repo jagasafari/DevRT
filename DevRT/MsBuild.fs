@@ -27,7 +27,7 @@ let getRunArgsString slnFile = ("%s /m" %% slnFile)
 let handleStarting log getNow updateStatus () =
     "%O" %% (() |> getNow) |> log;  updateStatus
 
-let runMSBuild processOutput run getStatus post =
+let handle processOutput run getStatus post =
     let processOutput' output = output |> ((getStatus()) |> processOutput)
     run processOutput'
     getStatus() |> post

@@ -56,7 +56,7 @@ let copyBuildOutput log source target =
     sprintf "coping from %s to %s" source target |> log
     copyAllFiles' source target |> ignore
 
-let handle getUpdatedStatus handleOutput data =
+let handleRunning getUpdatedStatus handleOutput data =
     let update, getStatus = createStatus Noise
     data |> getUpdatedStatus (getStatus()) |> update
     data |> handleOutput (getStatus())

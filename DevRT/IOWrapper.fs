@@ -22,3 +22,6 @@ let copyFile x y = File.Copy(x, y)
 
 let createPath dest = Path.GetFileName >> combine dest
 
+let readAllLines path = File.ReadAllLines path
+
+let writeAllLines path lines = File.WriteAllLines(path, lines)

@@ -6,9 +6,6 @@ open ConsoleOutput
 open DevRT.DataTypes
 open FileUtil
 open IOWrapper
-open ProcessRunner
-open MsBuild
-open Refactor
 open StringWrapper
 
 let createAgent' handle =
@@ -21,11 +18,11 @@ let composeNUnitHandle (nUnitConfig: NUnitConfig) =
             writelineDarkCyan
             writelineYellow
             (NUnit.writeFailureLineNumberInfo writelineYellow)
-    let handle' = NUnit.handle NUnit.getUpdatedStatus handleOutput'
+    let handle' = NUnit.handleRunning NUnit.getUpdatedStatus handleOutput'
     let deleteAllFiles' = deleteAllFiles exists deleteRecursive
     let cleanDirectory'() =
         cleanDirectory deleteAllFiles' createDirectory nUnitConfig.DeploymentDir
-    let getProcessStartInfo' = getProcessStartInfo nUnitConfig.NUnitConsole
+    let getProcessStartInfo' = ProcessRunner.getProcessStartInfo nUnitConfig.NUnitConsole
     let getOutputDirectory dllsSource =
             let outputDirectory =
                 dllsSource
@@ -42,23 +39,23 @@ let composeNUnitHandle (nUnitConfig: NUnitConfig) =
             nUnitConfig.TestProjects
     NUnit.run prepareAndRunTests
 
-let runMsBuild' (msBuildConfig: MsBuildConfig) post () =
+let composeMsBuildHandle (msBuildConfig: MsBuildConfig) post () =
     let getMsBuildStartInfo() =
-        getProcessStartInfo
+        ProcessRunner.getProcessStartInfo
             msBuildConfig.MsBuildPath
-            (getRunArgsString msBuildConfig.SolutionFile)
+            (MsBuild.getRunArgsString msBuildConfig.SolutionFile)
             msBuildConfig.MsBuildWorkingDir
     let update, getStatus = createStatus Starting
-    let getContinuationStatus' = getStatus >> getContinuationStatus
-    let updateStatus = (getUpdatedStatus contains getContinuationStatus') >> update
-    let handleStarting' = handleStarting writelineDarkGreen getNow updateStatus
+    let getContinuationStatus' = getStatus >> MsBuild.getContinuationStatus
+    let updateStatus = (MsBuild.getUpdatedStatus contains getContinuationStatus') >> update
+    let handleStarting' = MsBuild.handleStarting writelineDarkGreen getNow updateStatus
     let processOutput' =
-        processOutput
+        MsBuild.processOutput
             handleStarting' writelinePurple writelineRed updateStatus
-    let run' = run getMsBuildStartInfo
-    runMSBuild processOutput' run' getStatus post
+    let run' = ProcessRunner.run getMsBuildStartInfo
+    MsBuild.handle processOutput' run' getStatus post
 
-let runFileWatch (config: FileWatchConfig) =
+let composeFileWatchHandle (config: FileWatchConfig) =
     let getFiles() =
          config.MsBuildWorkingDir
          |> FileWatchAgent.getFiles
@@ -69,14 +66,17 @@ let runFileWatch (config: FileWatchConfig) =
         FileWatchAgent.isNewModification getTimeLine' FileWatchAgent.getLastWriteTime
     FileWatchAgent.handle getFiles isNewModification'
 
+let composeRefactorHandle () =
+    Refactor.handle (Collections.Generic.HashSet<string>())
+
 let getPostToFileWatchAgent fileWatchConfig nUnitConfig msBuildConfig =
     let nUnitHandle = composeNUnitHandle nUnitConfig
     let nUnitAgent = createAgent' nUnitHandle ()
-    let msBuildHandle = runMsBuild' msBuildConfig nUnitAgent.Post
+    let msBuildHandle = composeMsBuildHandle msBuildConfig nUnitAgent.Post
     let msBuildAgent = createAgent' msBuildHandle ()
-    let refactorAgent = createAgent' getRefactorHandle ()
+    let refactorAgent = createAgent' (composeRefactorHandle()) ()
     let fileWatchHandle =
-        runFileWatch fileWatchConfig msBuildAgent.Post refactorAgent.Post
+        composeFileWatchHandle fileWatchConfig msBuildAgent.Post refactorAgent.Post
     let fileWatchAgent = createAgent' fileWatchHandle ()
     let run () =
         Run.run fileWatchConfig.SleepMilliseconds fileWatchAgent.Post refactorAgent.Post
