@@ -18,7 +18,8 @@ FileWatch:
     - out
 Solution:
     MsBuildWorkingDir: c:/DevRT
-    SolutionFile: MyDev.sln
+    OptionArgs:
+    SolutionOrProjectFile: MyDev.sln
 NUnit:
     TestProjects:
         TestsOn: true

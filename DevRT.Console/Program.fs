@@ -5,11 +5,10 @@ open Configuration
 
 [<EntryPoint>]
 let main argv =
-    DevRT.Logging.info "kfj"
     let config = initConfig()
-    let fileWatchConfig = getFileWatchConfig Logging.info config
+    let fileWatchConfig = getFileWatchConfig config
     let nUnitConfig = getNUnitConfig config
-    let msBuildConfig = getMsBuildConfig config
+    let msBuildConfig = getMsBuildConfig Logging.info config
 
     let run =
         ExportApi.getPostToFileWatchAgent fileWatchConfig nUnitConfig msBuildConfig

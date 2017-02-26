@@ -40,11 +40,12 @@ let composeNUnitHandle (nUnitConfig: NUnitConfig) =
     NUnit.run prepareAndRunTests
 
 let composeMsBuildHandle (msBuildConfig: MsBuildConfig) post () =
+    let args =
+        MsBuild.getRunArgsString
+            msBuildConfig.OptionArgs msBuildConfig.SolutionOrProjectFile
     let getMsBuildStartInfo() =
         ProcessRunner.getProcessStartInfo
-            msBuildConfig.MsBuildPath
-            (MsBuild.getRunArgsString msBuildConfig.SolutionFile)
-            msBuildConfig.MsBuildWorkingDir
+            msBuildConfig.MsBuildPath args msBuildConfig.MsBuildWorkingDir
     let update, getStatus = createStatus Starting
     let getContinuationStatus' = getStatus >> MsBuild.getContinuationStatus
     let updateStatus = (MsBuild.getUpdatedStatus contains getContinuationStatus') >> update
@@ -67,17 +68,22 @@ let composeFileWatchHandle (config: FileWatchConfig) =
     FileWatchAgent.handle getFiles isNewModification'
 
 let composeRefactorHandle () =
-    Refactor.handle (Collections.Generic.HashSet<string>())
+    let refactor' =
+        Refactor.refactor
+            (Refactor.processFile IOWrapper.readAllLines)
+            IOWrapper.writeAllLines
+            IOWrapper.fileExists
+    Refactor.handle refactor' (Collections.Generic.HashSet<string>())
 
 let getPostToFileWatchAgent fileWatchConfig nUnitConfig msBuildConfig =
     let nUnitHandle = composeNUnitHandle nUnitConfig
-    let nUnitAgent = createAgent' nUnitHandle ()
+    let nUnitAgent = createAgent' nUnitHandle
     let msBuildHandle = composeMsBuildHandle msBuildConfig nUnitAgent.Post
-    let msBuildAgent = createAgent' msBuildHandle ()
-    let refactorAgent = createAgent' (composeRefactorHandle()) ()
+    let msBuildAgent = createAgent' msBuildHandle
+    let refactorAgent = createAgent' (composeRefactorHandle())
     let fileWatchHandle =
         composeFileWatchHandle fileWatchConfig msBuildAgent.Post refactorAgent.Post
-    let fileWatchAgent = createAgent' fileWatchHandle ()
+    let fileWatchAgent = createAgent' fileWatchHandle
     let run () =
         Run.run fileWatchConfig.SleepMilliseconds fileWatchAgent.Post refactorAgent.Post
         |> Seq.toList

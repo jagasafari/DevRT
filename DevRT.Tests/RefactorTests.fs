@@ -6,6 +6,7 @@ open NUnit.Framework
 open Swensen.Unquote
 open DevRT.DataTypes
 open DevRT.Refactor
+open DevRT.StringWrapper
 
 let randomString n =
     let rnd = Random()
@@ -19,9 +20,11 @@ let randomStringRandomLength max =
     rnd.Next(1, max) |> randomString
 
 let getLine = function
-    | "t" -> 255 |> randomStringRandomLength | _ -> String.Empty
+    | "randomString" -> 255 |> randomStringRandomLength
+    | "emptyLine" -> String.Empty
+    | _ -> String.Empty
 
-let getLines = Array.map (fun l -> l |> getLine)
+let getTestLines = Array.map getLine
 
 [<TestCase("", false)>]
 [<TestCase("  ", false)>]
@@ -42,59 +45,48 @@ let ``notEmptyLine: new line`` () =
 let ``notEmptyPairsOfLines: cases`` l1 l2 expected =
     (l1, l2) |> notEmptyPairOfLines =! expected
 
-[<TestCase("t,e", 1)>]
-[<TestCase("t,e,t", 3)>]
-[<TestCase("t,e,e", 1)>]
-[<TestCase("t,e,e,e", 1)>]
+[<TestCase("randomString,emptyLine", 1)>]
+[<TestCase("randomString,emptyLine,randomString", 3)>]
+[<TestCase("randomString,emptyLine,emptyLine", 1)>]
+[<TestCase("randomString,emptyLine,emptyLine,emptyLine", 1)>]
 let ``Remove trailing blank lines: n blank lines -> file trimmed`` lines expected =
-    let lines' = DevRT.StringWrapper.split ',' lines |> getLines
-    lines' |> trimEmptyLines |> Seq.length =! expected
+    lines |> split ',' |> getTestLines |> processLines |> Seq.length =! expected
 
-[<Test>]
-let ``experiment: laziness of seq`` () =
-    let add, getResult = Common.mock()
-    let nl l = add l; l
-    let s = seq{yield nl "a"; yield nl "b"; yield nl "c"; yield nl "d"; yield nl "e"}
-    let last = s|>Seq.last
-    s
-    |> Seq.map (fun l -> nl ("1" + l))
-    |> Seq.pairwise
-    |> Seq.map(fun (l,r)-> nl (l+r))
-    |> Seq.toList
-    |> ignore
-    getResult() =! ["a";"b";"c";"d";"e";"a";"1a";"b";"1b";"1a1b";"c";"1c";"1b1c";"d";"1d";"1c1d";"e";"1e";"1d1e"]
+[<TestCase("abc", "abc")>]
+[<TestCase("abc  ", "abc")>]
+[<TestCase("a bc  ", "a bc")>]
+[<TestCase("   abc", "   abc")>]
+let ``processLines: cases -> trailing whitespaces removed`` line expected =
+    [|line|] |> processLines |> Seq.toList =! [expected]
 
-[<Test>]
-let ``experiment: laziness of seq when from array`` () =
-    let add, getResult = Common.mock()
-    let nl l = add l; l
-    let s = [|nl "a"; nl "b"; nl "c"; nl "d"; nl "e"|]
-    s|>Array.last|>ignore
-    s|>Array.last|>ignore
-
-    s
-    |> Array.toSeq
-    |> Seq.map (fun l -> nl ("1" + l))
-    |> Seq.pairwise
-    |> Seq.map(fun (l,r)-> nl (l+r))
-    |> Seq.toList
-    |> ignore
-    getResult() =! ["a";"b";"c";"d";"e";"1a";"1b";"1a1b";"1c";"1b1c";"1d";"1c1d";"1e";"1d1e"]
-
-let getNonEmptySet() =
+let getNonEmptySet n =
     let nonEmptySet = Collections.Generic.HashSet<string>()
-    nonEmptySet.Add "kdj" |> ignore
+    [1..n]
+    |> List.iter(fun i -> (sprintf "abc%d" i) |> nonEmptySet.Add |> ignore)
     nonEmptySet
+
+[<TestCase(1, "filtering")>]
+[<TestCase(0, "")>]
+[<TestCase(4, "filtering;filtering;filtering;filtering")>]
+let ``refactor: none existing files -> noting processed`` setSize expected =
+    let add, getResult = Common.mock()
+    refactor
+        (fun f -> add (sprintf "processing %s" f))
+        (fun f _ -> add (sprintf "writting %s" f))
+        (fun _ -> add "filtering"; false)
+        (getNonEmptySet setSize)
+    getResult()
+    =! (expected |> split ';' |> Array.filter (isNullOrWhiteSpace >> not)|> Array.toList)
 
 [<Test>]
 let ``handle: Refactor msg -> clears set of modified files`` () =
-    let testSet = (getNonEmptySet())
-    handle testSet RefactorModifiedFiles
+    let testSet = getNonEmptySet 1
+    handle (fun _ -> ()) testSet RefactorModifiedFiles
     testSet.Count =! 0
 
-[<Test>]
-let ``handle: queue msg -> adds file`` () =
-    let testSet = (getNonEmptySet())
-    handle testSet (QueueModifiedFile "adding")
+[<TestCase(1, "abc1;adding")>]
+let ``handle: queue msg -> adds file`` setSize expected =
+    let testSet = getNonEmptySet setSize
+    handle (fun _ -> ()) testSet (QueueModifiedFile "adding")
     testSet.Count =! 2
-    testSet |> Seq.toList =! ["kdj";"adding"]
+    testSet |> Seq.toList =! (expected |> split ';' |> Array.toList)

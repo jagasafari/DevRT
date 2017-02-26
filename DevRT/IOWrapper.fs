@@ -13,6 +13,7 @@ let enumerateFiles = Directory.EnumerateFiles
 let enumerateDirectories = Directory.EnumerateDirectories
 
 let exists = Directory.Exists
+let fileExists = File.Exists
 
 let deleteRecursive target = Directory.Delete(target, true)
 

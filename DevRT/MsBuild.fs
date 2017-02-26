@@ -22,7 +22,7 @@ let processOutput handleStarting handleSuccess handleFailure updateStatus = func
     | BuildFailed | MSBuildError -> handleFailure
     | BuildSucceeded -> handleSuccess
 
-let getRunArgsString slnFile = ("%s /m" %% slnFile)
+let getRunArgsString args slnOrProjectFile = (sprintf "%s %s" slnOrProjectFile args)
 
 let handleStarting log getNow updateStatus () =
     "%O" %% (() |> getNow) |> log;  updateStatus

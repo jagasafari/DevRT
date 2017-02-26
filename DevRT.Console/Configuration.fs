@@ -11,8 +11,7 @@ let getTestProjectConfig (config: Config.NUnit_Type.TestProjects_Type) =
     | false -> RunTestsOff
     | true -> (config.Directory, config.Dlls |> Seq.toList) |> RunTestsOn
 
-let getFileWatchConfig log (config: Config) =
-    log config.FileWatch.ExcludedDirectories
+let getFileWatchConfig (config: Config) =
     {
     SleepMilliseconds = config.FileWatch.SleepMiliseconds
     ExcludedDirectories = config.FileWatch.ExcludedDirectories
@@ -24,10 +23,13 @@ let getNUnitConfig (config: Config) =
     NUnitConsole = config.Environment.NUnitConsole
     DeploymentDir = config.Environment.DeploymentDir }
 
-let getMsBuildConfig (config: Config) =
+let getMsBuildConfig log (config: Config) =
+    log config.Solution.OptionArgs
     {
     MsBuildPath = config.Environment.MsBuildPath
     MsBuildWorkingDir = config.Solution.MsBuildWorkingDir
-    SolutionFile = config.Solution.SolutionFile}
+    SolutionOrProjectFile = config.Solution.SolutionOrProjectFile
+    OptionArgs = config.Solution.OptionArgs}
+
 
 

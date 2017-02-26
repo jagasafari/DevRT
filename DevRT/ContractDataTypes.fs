@@ -16,4 +16,5 @@ type NUnitConfig = {
 type MsBuildConfig = {
     MsBuildPath: string
     MsBuildWorkingDir: string
-    SolutionFile: string }
+    SolutionOrProjectFile: string
+    OptionArgs: string}
