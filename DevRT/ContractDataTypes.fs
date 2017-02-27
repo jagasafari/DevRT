@@ -5,7 +5,7 @@ type TestProjects = | RunTestsOn of (string * string list) | RunTestsOff
 [<NoComparison>]
 type FileWatchConfig = {
     SleepMilliseconds: int
-    MsBuildWorkingDir: string
+    FileChangeWatchDir: string
     ExcludedDirectories: seq<string> }
 
 type NUnitConfig = {

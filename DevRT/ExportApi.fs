@@ -57,10 +57,10 @@ let composeMsBuildHandle (msBuildConfig: MsBuildConfig) post () =
     MsBuild.handle processOutput' run' getStatus post
 
 let composeFileWatchHandle (config: FileWatchConfig) =
+    let isDirectoryExcludedFromWatch =
+        (config.ExcludedDirectories |> FileWatchAgent.isBaseCase)
     let getFiles() =
-         config.MsBuildWorkingDir
-         |> FileWatchAgent.getFiles
-             (config.ExcludedDirectories |> FileWatchAgent.isBaseCase)
+         FileWatchAgent.getFiles isDirectoryExcludedFromWatch config.FileChangeWatchDir
     let getTimeLine' () =
         FileWatchAgent.getTimeLine getNow config.SleepMilliseconds
     let isNewModification' =

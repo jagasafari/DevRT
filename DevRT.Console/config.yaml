@@ -5,6 +5,7 @@ Environment:
     DeploymentDir: c:/run/nunit
 FileWatch:
     SleepMiliseconds: 1000
+    FileChangeWatchDir: c:/DevRT
     ExcludedDirectories:
     - packages
     - debug
@@ -17,9 +18,9 @@ FileWatch:
     - logs
     - out
 Solution:
-    MsBuildWorkingDir: c:/DevRT
+    MsBuildWorkingDir: c:/DevRT/DevRT.Tests
     OptionArgs:
-    SolutionOrProjectFile: MyDev.sln
+    SolutionOrProjectFile: DevRT.Tests.fsproj
 NUnit:
     TestProjects:
         TestsOn: true

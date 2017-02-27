@@ -15,7 +15,7 @@ let getFileWatchConfig (config: Config) =
     {
     SleepMilliseconds = config.FileWatch.SleepMiliseconds
     ExcludedDirectories = config.FileWatch.ExcludedDirectories
-    MsBuildWorkingDir = config.Solution.MsBuildWorkingDir}
+    FileChangeWatchDir = config.FileWatch.FileChangeWatchDir }
 
 let getNUnitConfig (config: Config) =
     {
@@ -30,6 +30,3 @@ let getMsBuildConfig log (config: Config) =
     MsBuildWorkingDir = config.Solution.MsBuildWorkingDir
     SolutionOrProjectFile = config.Solution.SolutionOrProjectFile
     OptionArgs = config.Solution.OptionArgs}
-
-
-
