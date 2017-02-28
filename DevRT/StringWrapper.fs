@@ -1,8 +1,15 @@
 module DevRT.StringWrapper
 
 open System
+open System.Text.RegularExpressions
+
+let replaceRegex pattern (replacement: string) (str: string) =
+    let regex = Regex(pattern)
+    regex.Replace(str, replacement)
 
 let contains substr (str: string) = str.Contains(substr)
+let replace (pattern: string) replacement (str: string) = 
+    str.Replace(pattern, replacement)
 
 let containsCaseInsensitive (substr:string) (str: string) =
     str.ToLower().Contains(substr.ToLower())

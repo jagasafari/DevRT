@@ -17,14 +17,14 @@ let rec getFiles isBaseCase dir =
             for d in dir |> enumerateDirectories do
                 yield! getFiles isBaseCase d }
 
-let internal getTimeLine (getNow: unit -> DateTime) sleepMiliseconds =
+let getTimeLine (getNow: unit -> DateTime) sleepMiliseconds =
     let now = getNow()
     let delay = 100
     (-(sleepMiliseconds + delay)) |> float |> now.AddMilliseconds
 
-let internal getLastWriteTime filePath = (IO.FileInfo filePath).LastWriteTime
+let getLastWriteTime filePath = (IO.FileInfo filePath).LastWriteTime
 
-let internal isNewModification getTimeLine getLastWriteTime filePath =
+let isNewModification getTimeLine getLastWriteTime filePath =
     (filePath |> getLastWriteTime) > (getTimeLine())
 
 let handle getFiles isNewModification post postModifiedFile () =

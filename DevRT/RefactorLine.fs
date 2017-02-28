@@ -5,6 +5,22 @@ open StringWrapper
 
 let removeTrailingWhiteSpaces = trimEnd ' '
 
-let getSubstringReplacmentForFSharp () =
-    []
-    |> List.map ReplaceSubstr
+let removeInnerSpaces line = line
+
+let replaceLine replace getDefinitions line =
+    let rec accLine definitionList li =
+        match definitionList with
+        | (p,r)::tl -> accLine tl (replace p r li)
+        | [] -> li
+    accLine (getDefinitions()) line
+
+let getRegExReplacementForFSharp () =
+    [
+        ("(^| )l ","let ")
+        ("(^| )o ", "open ")
+        ("(^| )t ", "type ")
+        ("(?<m>\S)->","${m} ->")
+        ("->(?<m>\S)","-> ${m}")
+        (",(?<m>\S)",", ${m}")
+        ("(?<m>[a-zA-Z]) p ","${m} |> ")
+    ]

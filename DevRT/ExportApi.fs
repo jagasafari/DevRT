@@ -68,11 +68,12 @@ let composeFileWatchHandle (config: FileWatchConfig) =
     FileWatchAgent.handle getFiles isNewModification'
 
 let composeRefactorHandle () =
+    let fileFilter' = Refactor.fileFilter IOWrapper.fileExists
     let refactor' =
         Refactor.refactor
             (Refactor.processFile IOWrapper.readAllLines)
             IOWrapper.writeAllLines
-            IOWrapper.fileExists
+            fileFilter' 
     Refactor.handle refactor' (Collections.Generic.HashSet<string>())
 
 let getPostToFileWatchAgent fileWatchConfig nUnitConfig msBuildConfig =

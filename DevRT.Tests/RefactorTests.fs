@@ -6,6 +6,7 @@ open NUnit.Framework
 open Swensen.Unquote
 open DevRT.DataTypes
 open DevRT.Refactor
+open DevRT.RefactorLine
 open DevRT.StringWrapper
 
 let randomString n =
@@ -45,19 +46,20 @@ let ``notEmptyLine: new line`` () =
 let ``notEmptyPairsOfLines: cases`` l1 l2 expected =
     (l1, l2) |> notEmptyPairOfLines =! expected
 
+let pl = processLines removeTrailingWhiteSpaces
 [<TestCase("randomString,emptyLine", 1)>]
 [<TestCase("randomString,emptyLine,randomString", 3)>]
 [<TestCase("randomString,emptyLine,emptyLine", 1)>]
 [<TestCase("randomString,emptyLine,emptyLine,emptyLine", 1)>]
 let ``Remove trailing blank lines: n blank lines -> file trimmed`` lines expected =
-    lines |> split ',' |> getTestLines |> processLines |> Seq.length =! expected
+    lines |> split ',' |> getTestLines |> pl |> Seq.length =! expected
 
 [<TestCase("abc", "abc")>]
 [<TestCase("abc  ", "abc")>]
 [<TestCase("a bc  ", "a bc")>]
 [<TestCase("   abc", "   abc")>]
 let ``processLines: cases -> trailing whitespaces removed`` line expected =
-    [|line|] |> processLines |> Seq.toList =! [expected]
+    [|line|] |> pl |> Seq.toList =! [expected]
 
 let getNonEmptySet n =
     let nonEmptySet = Collections.Generic.HashSet<string>()

@@ -13,23 +13,34 @@ let notEmptyLine line =
 
 let notEmptyPairOfLines (l1, l2) = l1 |> notEmptyLine || l2 |> notEmptyLine
 
-let processLines lines =
+let processLines processSingleLine lines =
     let last = lines |> Array.last
     let trimed =
         lines
         |> Array.toSeq
         |> Seq.pairwise
         |> Seq.filter notEmptyPairOfLines
-        |> Seq.map (fun (p, _) -> p |> removeTrailingWhiteSpaces)
+        |> Seq.map (fun (p, _) -> p |> processSingleLine )
     seq {
         yield! trimed
-        if last |> notEmptyLine then yield last |> removeTrailingWhiteSpaces}
+        if last |> notEmptyLine then yield last |> processSingleLine }
 
-let processFile readLines = readLines >> processLines >> Seq.toArray
+let getProcessSingleLine file =
+    match file |> contains ".fs" with
+    | true ->
+        removeTrailingWhiteSpaces
+        >> replaceLine replaceRegex getRegExReplacementForFSharp
+    | false -> removeTrailingWhiteSpaces
 
-let refactor processFile writeLines exists (files: HashSet<string>) =
+let processFile readLines file =
+    file |> readLines |> processLines (getProcessSingleLine file) |> Seq.toArray
+
+let fileFilter exists file =
+    (exists file) && (contains ".fs" file || contains ".cs" file)
+
+let refactor processFile writeLines fileFilter (files: HashSet<string>) =
     files
-    |> Seq.filter exists
+    |> Seq.filter fileFilter //nothing processed don't rewrite the file
     |> Seq.iter(fun f -> writeLines f (processFile f))
 
 let handle
