@@ -33,4 +33,4 @@ let handle getFiles isNewModification post postModifiedFile () =
     | Some file ->
         "modification found %s" %% file |> Logging.info
         post()
-        file |> QueueModifiedFile |> postModifiedFile
+        file |> postModifiedFile

@@ -2,6 +2,7 @@ module DevRT.Refactor
 
 open System
 open System.Collections.Generic
+open System.Linq
 open DataTypes
 open RefactorLine
 open StringWrapper
@@ -33,20 +34,22 @@ let getProcessSingleLine file =
     | false -> removeTrailingWhiteSpaces
 
 let processFile readLines file =
-    file |> readLines |> processLines (getProcessSingleLine file) |> Seq.toArray
+    let originalLines = file |> readLines
+    let processedLines = originalLines |> processLines (getProcessSingleLine file) |> Seq.toArray
+    match ((set originalLines) - (set processedLines), ((originalLines.Count()) <> (processedLines.Count()))) with
+    | (s, false) when s.IsEmpty -> None
+    | s -> Some processedLines
 
 let fileFilter exists file =
-    (exists file) && (contains ".fs" file || contains ".cs" file)
+    : (exists file) && (isRegexMatch ".fs$" file || isRegexMatch ".cs$" file)
 
-let refactor processFile writeLines fileFilter (files: HashSet<string>) =
-    files
-    |> Seq.filter fileFilter //nothing processed don't rewrite the file
-    |> Seq.iter(fun f -> writeLines f (processFile f))
+let refactor processFile writeLines fileFilter file =
+    match file |> fileFilter with
+    | true ->
+        match processFile file with
+        | Some lines -> writeLines file lines
+        | None -> ()
+    | false -> ()
 
-let handle
-    refactor
-    (modifiedFilesSet: HashSet<string>) = function
-    | RefactorModifiedFiles ->
-        modifiedFilesSet |> refactor
-        modifiedFilesSet.Clear()
-    | QueueModifiedFile file -> file |> modifiedFilesSet.Add |> ignore
+let handle refactor (modifiedFilesSet: HashSet<string>) file =
+    file |> refactor

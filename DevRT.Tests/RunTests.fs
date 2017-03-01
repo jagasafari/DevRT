@@ -12,14 +12,12 @@ open DevRT.Run
 let ``run: n times -> file watch executed n times`` n =
     let add, getResult = mock()
     let post() = add "posting"
-    let postToRefactor key =
-        key |> sprintf "posting key: %A" |> add
-    run 1 post postToRefactor |> Seq.take n |> Seq.toList |> ignore
+    run 1 post |> Seq.take n |> Seq.toList |> ignore
     getResult().Length =! n
 
 [<Test>]
 let ``action: checking key -> post to run ci called`` () =
     let add, getResult = mock()
     let postToRunCi() = add  "running ci"
-    action postToRunCi shouldNotBeCalled ()
+    action postToRunCi ()
     getResult() =! ["running ci"]

@@ -37,20 +37,20 @@ let ``notEmptyLine: cases`` line expectedResult =
 let ``notEmptyLine: new line`` () =
     (Environment.NewLine |> notEmptyLine) =! false
 
-[<TestCase("","",false)>]
-[<TestCase("fschs","fjhskhf sk",true)>]
-[<TestCase("","fklhss",true)>]
-[<TestCase("dgfhs  ha","",true)>]
-[<TestCase("      ","",false)>]
-[<TestCase("      ","    ",false)>]
+[<TestCase("", "", false)>]
+[<TestCase("fschs", "fjhskhf sk", true)>]
+[<TestCase("", "fklhss", true)>]
+[<TestCase("dgfhs  ha", "", true)>]
+[<TestCase("      ", "", false)>]
+[<TestCase("      ", "    ", false)>]
 let ``notEmptyPairsOfLines: cases`` l1 l2 expected =
     (l1, l2) |> notEmptyPairOfLines =! expected
 
 let pl = processLines removeTrailingWhiteSpaces
-[<TestCase("randomString,emptyLine", 1)>]
-[<TestCase("randomString,emptyLine,randomString", 3)>]
-[<TestCase("randomString,emptyLine,emptyLine", 1)>]
-[<TestCase("randomString,emptyLine,emptyLine,emptyLine", 1)>]
+[<TestCase("randomString, emptyLine", 1)>]
+[<TestCase("randomString, emptyLine, randomString", 3)>]
+[<TestCase("randomString, emptyLine, emptyLine", 1)>]
+[<TestCase("randomString, emptyLine, emptyLine, emptyLine", 1)>]
 let ``Remove trailing blank lines: n blank lines -> file trimmed`` lines expected =
     lines |> split ',' |> getTestLines |> pl |> Seq.length =! expected
 
@@ -61,34 +61,22 @@ let ``Remove trailing blank lines: n blank lines -> file trimmed`` lines expecte
 let ``processLines: cases -> trailing whitespaces removed`` line expected =
     [|line|] |> pl |> Seq.toList =! [expected]
 
-let getNonEmptySet n =
-    let nonEmptySet = Collections.Generic.HashSet<string>()
-    [1..n]
-    |> List.iter(fun i -> (sprintf "abc%d" i) |> nonEmptySet.Add |> ignore)
-    nonEmptySet
-
-[<TestCase(1, "filtering")>]
-[<TestCase(0, "")>]
-[<TestCase(4, "filtering;filtering;filtering;filtering")>]
-let ``refactor: none existing files -> noting processed`` setSize expected =
+[<TestCase("filtering")>]
+let ``refactor: none existing files -> noting processed`` expected =
     let add, getResult = Common.mock()
     refactor
-        (fun f -> add (sprintf "processing %s" f))
+        (fun f -> add (sprintf "processing %s" f); None)
         (fun f _ -> add (sprintf "writting %s" f))
         (fun _ -> add "filtering"; false)
-        (getNonEmptySet setSize)
+        "efefw"
     getResult()
     =! (expected |> split ';' |> Array.filter (isNullOrWhiteSpace >> not)|> Array.toList)
 
-[<Test>]
-let ``handle: Refactor msg -> clears set of modified files`` () =
-    let testSet = getNonEmptySet 1
-    handle (fun _ -> ()) testSet RefactorModifiedFiles
-    testSet.Count =! 0
-
-[<TestCase(1, "abc1;adding")>]
-let ``handle: queue msg -> adds file`` setSize expected =
-    let testSet = getNonEmptySet setSize
-    handle (fun _ -> ()) testSet (QueueModifiedFile "adding")
-    testSet.Count =! 2
-    testSet |> Seq.toList =! (expected |> split ';' |> Array.toList)
+[<TestCase(false, "whatever", false)>]
+[<TestCase(false, "abc.fs", false)>]
+[<TestCase(false, "abc.fs.xyz", false)>]
+[<TestCase(true, "whatever", false)>]
+[<TestCase(true, "abc.fs", true)>]
+[<TestCase(true, "abc.fs.xyz", false)>]
+let ``fileFilter: cases`` exists file expected =
+    fileFilter (fun _ -> exists) file =! expected

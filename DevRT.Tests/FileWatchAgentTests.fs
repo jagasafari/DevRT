@@ -36,7 +36,7 @@ let ``handle: file modifies -> posting`` () =
         (fun () -> seq { yield file })
         (fun _ -> true)
         (fun () -> "post" |> add)
-        (fun f -> sprintf "%A" f |> add)
+        (fun f -> sprintf "%s" f |> add)
         ()
-    getResult() =! ["post";"QueueModifiedFile \"file\""]
+    getResult() =! ["post";"file"]
 

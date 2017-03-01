@@ -86,6 +86,6 @@ let getPostToFileWatchAgent fileWatchConfig nUnitConfig msBuildConfig =
         composeFileWatchHandle fileWatchConfig msBuildAgent.Post refactorAgent.Post
     let fileWatchAgent = createAgent' fileWatchHandle
     let run () =
-        Run.run fileWatchConfig.SleepMilliseconds fileWatchAgent.Post refactorAgent.Post
+        Run.run fileWatchConfig.SleepMilliseconds fileWatchAgent.Post 
         |> Seq.toList
     run

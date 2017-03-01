@@ -9,10 +9,10 @@ let infiniteLoop (sleepMilliseconds: int) action =
             yield action(); Threading.Thread.Sleep sleepMilliseconds; yield! infinite() }
     infinite()
 
-let action postRunCi postRefactor () =
+let action postRunCi () =
     let rec actionRec = function
         | RunCi -> postRunCi()
-        | RunRefactor -> RefactorModifiedFiles |> postRefactor
+        | RunRefactor -> ()
         | CheckKeyPressed ->
             match Console.KeyAvailable with
             | true -> HandleKeyPressed |> actionRec
@@ -25,5 +25,5 @@ let action postRunCi postRefactor () =
             | _ -> RunCi |> actionRec
     actionRec CheckKeyPressed
 
-let run sleepMilliseconds postRunCi postRefactor =
-    action postRunCi postRefactor |> infiniteLoop sleepMilliseconds
+let run sleepMilliseconds postRunCi =
+    action postRunCi |> infiniteLoop sleepMilliseconds
