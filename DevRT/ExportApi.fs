@@ -73,8 +73,7 @@ let composeRefactorHandle () =
         Refactor.refactor
             (Refactor.processFile IOWrapper.readAllLines)
             IOWrapper.writeAllLines
-            fileFilter' 
-    Refactor.handle refactor' (Collections.Generic.HashSet<string>())
+    Refactor.handle refactor' fileFilter'
 
 let getPostToFileWatchAgent fileWatchConfig nUnitConfig msBuildConfig =
     let nUnitHandle = composeNUnitHandle nUnitConfig
@@ -86,6 +85,6 @@ let getPostToFileWatchAgent fileWatchConfig nUnitConfig msBuildConfig =
         composeFileWatchHandle fileWatchConfig msBuildAgent.Post refactorAgent.Post
     let fileWatchAgent = createAgent' fileWatchHandle
     let run () =
-        Run.run fileWatchConfig.SleepMilliseconds fileWatchAgent.Post 
+        Run.run fileWatchConfig.SleepMilliseconds fileWatchAgent.Post
         |> Seq.toList
     run

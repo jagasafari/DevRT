@@ -41,15 +41,13 @@ let processFile readLines file =
     | s -> Some processedLines
 
 let fileFilter exists file =
-    : (exists file) && (isRegexMatch ".fs$" file || isRegexMatch ".cs$" file)
+    (exists file) && (isRegexMatch ".fs$" file || isRegexMatch ".cs$" file)
 
-let refactor processFile writeLines fileFilter file =
-    match file |> fileFilter with
-    | true ->
-        match processFile file with
-        | Some lines -> writeLines file lines
-        | None -> ()
-    | false -> ()
+let refactor processFile writeLines file =
+    file
+    |> processFile
+    |> Option.fold(
+        fun _ lines -> lines |> writeLines file) ()
 
-let handle refactor (modifiedFilesSet: HashSet<string>) file =
-    file |> refactor
+let handle refactor fileFilter = function
+    | file when fileFilter file -> refactor file | _ -> ()

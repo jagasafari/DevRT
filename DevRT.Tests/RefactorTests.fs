@@ -18,10 +18,10 @@ let randomString n =
 
 let randomStringRandomLength max =
     let rnd = Random()
-    rnd.Next(1, max) |> randomString
+    rnd.Next(2, max) |> randomString
 
 let getLine = function
-    | "randomString" -> 255 |> randomStringRandomLength
+    | "randomString"|" randomString" -> 5 |> randomStringRandomLength
     | "emptyLine" -> String.Empty
     | _ -> String.Empty
 
@@ -64,13 +64,11 @@ let ``processLines: cases -> trailing whitespaces removed`` line expected =
 [<TestCase("filtering")>]
 let ``refactor: none existing files -> noting processed`` expected =
     let add, getResult = Common.mock()
-    refactor
-        (fun f -> add (sprintf "processing %s" f); None)
-        (fun f _ -> add (sprintf "writting %s" f))
+    handle
+        (fun f -> add (sprintf "processing %s" f))
         (fun _ -> add "filtering"; false)
         "efefw"
-    getResult()
-    =! (expected |> split ';' |> Array.filter (isNullOrWhiteSpace >> not)|> Array.toList)
+    getResult() =! [expected]
 
 [<TestCase(false, "whatever", false)>]
 [<TestCase(false, "abc.fs", false)>]
