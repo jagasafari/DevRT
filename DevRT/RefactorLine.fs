@@ -18,5 +18,5 @@ let getRegExReplacementForFSharp () =
         ("(^| )l ", "let ")
         ("(^| )o ", "open ")
         ("(^| )t ", "type ")
-        ("(?<m>[a-zA-Z]) p ", "${m} |> ")
+ //       ("(?<m>[a-zA-Z]) p ", "${m} |> ")
     ]

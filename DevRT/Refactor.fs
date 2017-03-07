@@ -26,19 +26,27 @@ let processLines processSingleLine lines =
         yield! trimed
         if last |> notEmptyLine then yield last |> processSingleLine }
 
-let getProcessSingleLine file =
+let processSingleLine file =
     match file |> contains ".fs" with
     | true ->
         removeTrailingWhiteSpaces
         >> replaceLine replaceRegex getRegExReplacementForFSharp
     | false -> removeTrailingWhiteSpaces
 
-let processFile readLines file =
-    let originalLines = file |> readLines
-    let processedLines = originalLines |> processLines (getProcessSingleLine file) |> Seq.toArray
-    match ((set originalLines) - (set processedLines), ((originalLines.Count()) <> (processedLines.Count()))) with
+let difference (original, processed) =
+    let setDiff = (set original) - (set processed)
+    let lineNumDiff = (original.Count()) <> (processed.Count())
+    setDiff, lineNumDiff
+
+let processFile read file =
+    let original = file |> read
+    let processed =
+        original
+        |> processLines (processSingleLine file)
+        |> Seq.toArray
+    match (original, processed) |> difference with
     | (s, false) when s.IsEmpty -> None
-    | s -> Some processedLines
+    | s -> Some processed
 
 let fileFilter exists file =
     (exists file) && (isRegexMatch ".fs$" file || isRegexMatch ".cs$" file)
@@ -46,8 +54,7 @@ let fileFilter exists file =
 let refactor processFile writeLines file =
     file
     |> processFile
-    |> Option.fold(
-        fun _ lines -> lines |> writeLines file) ()
+    |> Option.fold(fun _ lines -> lines |> writeLines file) ()
 
 let handle refactor fileFilter = function
     | file when fileFilter file -> refactor file | _ -> ()

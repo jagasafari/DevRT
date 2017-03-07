@@ -46,29 +46,20 @@ let ``notEmptyLine: new line`` () =
 let ``notEmptyPairsOfLines: cases`` l1 l2 expected =
     (l1, l2) |> notEmptyPairOfLines =! expected
 
-let pl = processLines removeTrailingWhiteSpaces
+let processLines' = processLines removeTrailingWhiteSpaces
 [<TestCase("randomString, emptyLine", 1)>]
 [<TestCase("randomString, emptyLine, randomString", 3)>]
 [<TestCase("randomString, emptyLine, emptyLine", 1)>]
 [<TestCase("randomString, emptyLine, emptyLine, emptyLine", 1)>]
 let ``Remove trailing blank lines: n blank lines -> file trimmed`` lines expected =
-    lines |> split ',' |> getTestLines |> pl |> Seq.length =! expected
+    lines |> split ',' |> getTestLines |> processLines' |> Seq.length =! expected
 
 [<TestCase("abc", "abc")>]
 [<TestCase("abc  ", "abc")>]
 [<TestCase("a bc  ", "a bc")>]
 [<TestCase("   abc", "   abc")>]
 let ``processLines: cases -> trailing whitespaces removed`` line expected =
-    [|line|] |> pl |> Seq.toList =! [expected]
-
-[<TestCase("filtering")>]
-let ``refactor: none existing files -> noting processed`` expected =
-    let add, getResult = Common.mock()
-    handle
-        (fun f -> add (sprintf "processing %s" f))
-        (fun _ -> add "filtering"; false)
-        "efefw"
-    getResult() =! [expected]
+    [|line|] |> processLines' |> Seq.toList =! [expected]
 
 [<TestCase(false, "whatever", false)>]
 [<TestCase(false, "abc.fs", false)>]
@@ -78,3 +69,12 @@ let ``refactor: none existing files -> noting processed`` expected =
 [<TestCase(true, "abc.fs.xyz", false)>]
 let ``fileFilter: cases`` exists file expected =
     fileFilter (fun _ -> exists) file =! expected
+
+[<TestCase("filtering")>]
+let ``refactor: none existing files -> noting processed`` expected =
+    let add, getResult = Common.mock()
+    handle
+        (fun f -> add (sprintf "processing %s" f))
+        (fun _ -> add "filtering"; false)
+        "efefw"
+    getResult() =! [expected]

@@ -11,7 +11,7 @@ let isRegexMatch pattern (str: string) =
     let regex = Regex(pattern)
     regex.IsMatch(str)
 let contains substr (str: string) = str.Contains(substr)
-let replace (pattern: string) replacement (str: string) = 
+let replace (pattern: string) replacement (str: string) =
     str.Replace(pattern, replacement)
 
 let containsCaseInsensitive (substr:string) (str: string) =

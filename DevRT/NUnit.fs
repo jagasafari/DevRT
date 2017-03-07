@@ -53,7 +53,7 @@ let copyBuildOutput log source target =
     let copySubdirectories copyAllFiles source dest =
         doCopy (dest |> createPath) (source |> getDirectories) copyAllFiles
     let copyAllFiles' = copyAllFiles createDirectory copyFiles copySubdirectories
-    sprintf "coping from %s to %s" source target |> log
+    (source, target) |> log
     copyAllFiles' source target |> ignore
 
 let handleRunning getUpdatedStatus handleOutput data =
@@ -61,23 +61,28 @@ let handleRunning getUpdatedStatus handleOutput data =
     data |> getUpdatedStatus (getStatus()) |> update
     data |> handleOutput (getStatus())
 
+let getArguments outputDir testProjectName =
+    combine outputDir (sprintf "%s.dll" testProjectName)
+
+let runTestProject run getArguments startInfo =
+    getArguments >> startInfo >> run
+
 let prepareAndRunTests
-    cleanDirectory getProcessStartInfo getOutputDirectory run = function
+    getOutputDirectory
+    getProcessStartInfo
+    cleanDirectory
+    copyBuildOutput
+    run = function
     | RunTestsOn (dllsSource, dlls) ->
         let outputDirectory = dllsSource |> getOutputDirectory
-        let startInfo dllFile () = getProcessStartInfo dllFile outputDirectory
-        stopNunitProcess
-               (getProcesses "nunit-agent") (500 |> sleep |> killProcess)
-        () |> cleanDirectory
-        copyBuildOutput Logging.info dllsSource outputDirectory
-        dlls |> sprintf "running tests: %A" |> Logging.info
+        let startInfo dllFile () =
+            getProcessStartInfo dllFile outputDirectory
+        stopProcess 500 "nunit-agent"
+        cleanDirectory()
+        copyBuildOutput dllsSource outputDirectory
         dlls
-        |> Seq.iter(fun tp ->
-                let arguments = combine outputDirectory ("%s.dll" %% tp)
-                Logging.info arguments
-                arguments
-                |> startInfo
-                |> run)
+        |> Seq.iter
+            (run (getArguments outputDirectory) startInfo)
     | _ -> ()
 
 let run prepareAndRunTests = function

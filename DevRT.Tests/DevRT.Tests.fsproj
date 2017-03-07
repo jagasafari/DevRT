@@ -44,10 +44,7 @@
     <None Include="App.config" />
     <Compile Include="Common.fs" />
     <Compile Include="StringWrapperTests.fs" />
-    <Compile Include="ProcessWrapperTests.fs" />
     <Compile Include="RunTests.fs" />
-
-
     <Compile Include="RefactorTests.fs" />
     <Compile Include="RefactorLineTests.fs" />
     <Compile Include="NUnitTests.fs" />

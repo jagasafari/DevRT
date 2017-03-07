@@ -1,6 +1,7 @@
 namespace DevRT
 
-type TestProjects = | RunTestsOn of (string * string list) | RunTestsOff
+type TestProjects =
+    | RunTestsOn of (string * string list) | RunTestsOff
 
 [<NoComparison>]
 type FileWatchConfig = {

@@ -1,8 +1,8 @@
-module DevRT.Tests.FileWatchAgentTests
+module DevRT.Tests.FileWatchTests
 
 open NUnit.Framework
 open Swensen.Unquote
-open DevRT.FileWatchAgent
+open DevRT.FileWatch
 
 let getNow () = System.DateTime(2016, 11, 21, 13, 10, 55)
 
@@ -21,12 +21,13 @@ let ``getTimeLine, last n seconds, seconds deducted``
 
 [<Test>]
 let ``handle: no file modified -> no posts`` () =
+    let add, getResult = Common.mock()
     handle
         (fun () -> seq { yield "whatever" })
         (fun _ -> false)
-        Common.shouldNotBeCalled
-        Common.shouldNotBeCalled
+        (fun modification -> add (sprintf "%A" modification))
         ()
+    getResult() =! ["<null>"]
 
 [<Test>]
 let ``handle: file modifies -> posting`` () =
@@ -35,8 +36,6 @@ let ``handle: file modifies -> posting`` () =
     handle
         (fun () -> seq { yield file })
         (fun _ -> true)
-        (fun () -> "post" |> add)
-        (fun f -> sprintf "%s" f |> add)
+        (fun f -> sprintf "%A" f |> add)
         ()
-    getResult() =! ["post";"file"]
-
+    getResult() =! ["Some \"file\""]

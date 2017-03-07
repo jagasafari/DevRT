@@ -9,7 +9,8 @@ let write (str: string) = Console.Write str
 let writeline (str: string) = Console.WriteLine str
 
 let writeColor write color (str:string) =
-    Console.ForegroundColor <- color; write str; Console.ResetColor()
+    Console.ForegroundColor <- color
+    write str; Console.ResetColor()
 
 let writeColorLine = writeColor writeline
 

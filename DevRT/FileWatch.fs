@@ -1,4 +1,4 @@
-module DevRT.FileWatchAgent
+module DevRT.FileWatch
 
 open System
 open DataTypes
@@ -27,10 +27,11 @@ let getLastWriteTime filePath = (IO.FileInfo filePath).LastWriteTime
 let isNewModification getTimeLine getLastWriteTime filePath =
     (filePath |> getLastWriteTime) > (getTimeLine())
 
-let handle getFiles isNewModification post postModifiedFile () =
-    match getFiles() |> Seq.tryFind isNewModification with
+let publishAboutModification
+    log post postModifiedFile = function
     | None -> ()
     | Some file ->
-        "modification found %s" %% file |> Logging.info
-        post()
-        file |> postModifiedFile
+        file |> log; post(); file |> postModifiedFile
+
+let handle getFiles isNewModification publish () =
+    getFiles() |> Seq.tryFind isNewModification |> publish

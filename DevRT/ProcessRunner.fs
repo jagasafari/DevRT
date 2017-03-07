@@ -16,14 +16,10 @@ let getProcessStartInfo fileName arguments workingDir =
     psi.WindowStyle <- ProcessWindowStyle.Hidden
     psi
 
-let logProcessStartInfo log (processStartInfo: ProcessStartInfo) =
-    processStartInfo.FileName |> log
-    processStartInfo.Arguments |> log
-
-let run getProcessStartInfo handleOutput =
-    let processStartInfo' = getProcessStartInfo()
-    logProcessStartInfo Logging.info processStartInfo'
-    use proc = new Process(StartInfo = processStartInfo')
+let run log getProcessStartInfo handleOutput =
+    let startInfo: ProcessStartInfo = getProcessStartInfo()
+    (startInfo.FileName, startInfo.Arguments) |> log
+    use proc = new Process(StartInfo = startInfo)
     proc.ErrorDataReceived.Add(fun d ->
         if d.Data <> null then writelineRed (d.Data))
     proc.OutputDataReceived.Add(fun d ->
@@ -33,4 +29,3 @@ let run getProcessStartInfo handleOutput =
     proc.BeginOutputReadLine()
     proc.BeginErrorReadLine()
     proc.WaitForExit() |> ignore
-

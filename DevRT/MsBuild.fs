@@ -8,26 +8,32 @@ let createMsBuildStatus () =
     let update newStatus = status <- newStatus
     update, fun () -> status
 
-let getContinuationStatus = function | Starting -> Building | x -> x
+let getContinuationStatus = function
+    | Starting -> Building | x -> x
 
-let getUpdatedStatus contains getContinuationStatus = function
+let getUpdatedStatus getContinuationStatus = function
     | d when contains "Build succeeded" d -> BuildSucceeded
     | d when contains "Build FAILED" d -> BuildFailed
     | d when contains "MSBUILD: error" d -> MSBuildError
     | _ -> () |> getContinuationStatus
 
-let processOutput handleStarting handleSuccess handleFailure updateStatus = function
-    | Starting -> () |> handleStarting
+let processOutput
+    handleStarting
+    handleSuccess
+    handleFailure
+    updateStatus = function
+    | Starting -> handleStarting()
     | Building -> updateStatus
     | BuildFailed | MSBuildError -> handleFailure
     | BuildSucceeded -> handleSuccess
 
-let getRunArgsString args slnOrProjectFile = (sprintf "%s %s" slnOrProjectFile args)
+let getRunArgsString args slnOrProjectFile =
+    sprintf "%s %s" slnOrProjectFile args
 
-let handleStarting log getNow updateStatus () =
-    "%O" %% (() |> getNow) |> log;  updateStatus
+let handleStarting output getNow updateStatus () =
+    sprintf "%O" (getNow()) |> output;  updateStatus
 
 let handle processOutput run getStatus post =
-    let processOutput' output = output |> ((getStatus()) |> processOutput)
-    run processOutput'
+    (fun output -> (getStatus() |> processOutput) output)
+    |> run
     getStatus() |> post
