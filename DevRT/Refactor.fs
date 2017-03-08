@@ -26,11 +26,12 @@ let processLines processSingleLine lines =
         yield! trimed
         if last |> notEmptyLine then yield last |> processSingleLine }
 
-let processSingleLine file =
+let processSingleLine read file =
     match file |> contains ".fs" with
     | true ->
         removeTrailingWhiteSpaces
-        >> replaceLine replaceRegex getRegExReplacementForFSharp
+        >> replaceLine
+            replaceRegex (getRegExReplacementForFSharp read)
     | false -> removeTrailingWhiteSpaces
 
 let difference (original, processed) =
@@ -42,7 +43,7 @@ let processFile read file =
     let original = file |> read
     let processed =
         original
-        |> processLines (processSingleLine file)
+        |> processLines (processSingleLine read file)
         |> Seq.toArray
     match (original, processed) |> difference with
     | (s, false) when s.IsEmpty -> None

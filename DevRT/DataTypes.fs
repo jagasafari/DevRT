@@ -22,3 +22,5 @@ type LogMessageError =
 [<NoComparison>]
 type LogLevel =
     | Info of LogMessageInfo | Error of LogMessageError
+
+type LineRefactor = | Shorten | LikePipe

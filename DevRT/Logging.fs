@@ -5,11 +5,11 @@ open DataTypes
 
 let private logger = LogManager.GetLogger("Logging")
 
-let logMsg logLevel = sprintf "%A" >> logLevel
+let private logMsg logLevel = sprintf "%A" >> logLevel
 
 let info msg = msg |> logMsg logger.Info
 
-let error msg =
+let private error msg =
     msg |> printfn "%A"
     msg |> logMsg logger.Error
 

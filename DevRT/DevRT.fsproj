@@ -41,6 +41,9 @@
   </Target>
   <ItemGroup>
     <None Include="paket.references" />
+    <None Include="lineRefactor.csv" >
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="ContractDataTypes.fs" />
     <Compile Include="DataTypes.fs" />
