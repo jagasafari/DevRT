@@ -84,21 +84,26 @@ let composeFileWatchHandle (config: FileWatchConfig) =
             getTimeLine'
             FileWatch.getLastWriteTime)
 
-let composeRefactorHandle () =
+let composeRefactorHandle refactorConfig =
     Refactor.handle
         (Refactor.refactor
-            (Refactor.processFile IOWrapper.readAllLines)
+            (Refactor.processFile
+                (Refactor.getRules 
+                    IOWrapper.readAllLines
+                    refactorConfig.DevRTDeploymentDir)
+                IOWrapper.readAllLines
+                Refactor.processLines)
             IOWrapper.writeAllLines)
         (Refactor.fileFilter IOWrapper.fileExists)
 
 let getPostToFileWatchAgent
-    fileWatchConfig nUnitConfig msBuildConfig =
+    fileWatchConfig nUnitConfig msBuildConfig refactorConfig =
     let nUnitAgent =
         createAgent' (composeNUnitHandle nUnitConfig)
     let msBuildHandle() =
         composeMsBuildHandle msBuildConfig nUnitAgent.Post
     let msBuildAgent = createAgent' msBuildHandle
-    let refactorAgent = createAgent' (composeRefactorHandle())
+    let refactorAgent = createAgent' (composeRefactorHandle refactorConfig)
     let fileWatchAgent =
         createAgent'
             (composeFileWatchHandle

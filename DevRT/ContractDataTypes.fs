@@ -3,6 +3,9 @@ namespace DevRT
 type TestProjects =
     | RunTestsOn of (string * string list) | RunTestsOff
 
+type RefactorConfig = {
+    DevRTDeploymentDir: string }
+
 [<NoComparison>]
 type FileWatchConfig = {
     SleepMilliseconds: int

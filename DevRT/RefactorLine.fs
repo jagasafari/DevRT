@@ -13,13 +13,14 @@ let replaceLine replace getDefinitions line =
         | [] -> line
     accLine (getDefinitions()) line
 
-let  getRegExReplacementForFSharp read () =
-    @"c:\run\console\lineRefactor.csv" |> read
-    |> Array.map (split ',' >> Array.toList)
-    |> Array.map (fun rule ->
+let likeLetRule short key =
+    sprintf "(?<m1>^| )%s(?<m2> |$)" short,
+    sprintf "${m1}%s${m2}" key
+
+let getRegExReplacementForFSharp rules () =
+    rules
+    |> List.map (fun rule ->
         match rule with
-        | ["Shorten";short;key] ->
-            (sprintf "(^| )%s " short, sprintf "%s " key)
+        | ["LikeLet";short;key;_] -> likeLetRule short key
+        // like (fun ; like Array.m
         | _ -> failwith "not known line refactor rule")
-    |> Array.toList
- //       ("(?<m>[a-zA-Z]) p ", "${m} |> ")

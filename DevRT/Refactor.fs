@@ -21,33 +21,44 @@ let processLines processSingleLine lines =
         |> Array.toSeq
         |> Seq.pairwise
         |> Seq.filter notEmptyPairOfLines
-        |> Seq.map (fun (p, _) -> p |> processSingleLine )
+        |> Seq.map (fun (p1, _) -> p1 |> processSingleLine )
     seq {
         yield! trimed
         if last |> notEmptyLine then yield last |> processSingleLine }
 
-let processSingleLine read file =
-    match file |> contains ".fs" with
-    | true ->
-        removeTrailingWhiteSpaces
-        >> replaceLine
-            replaceRegex (getRegExReplacementForFSharp read)
-    | false -> removeTrailingWhiteSpaces
+let processLineFsFile rules =
+    removeTrailingWhiteSpaces
+    >> replaceLine
+        replaceRegex (getRegExReplacementForFSharp rules)
+
+let processLineCsFile = removeTrailingWhiteSpaces
 
 let difference (original, processed) =
     let setDiff = (set original) - (set processed)
-    let lineNumDiff = (original.Count()) <> (processed.Count())
+    let lineNumDiff =
+        (original.Count()) <> (processed.Count())
     setDiff, lineNumDiff
 
-let processFile read file =
+let processLine rules = function
+    | file when file |> contains ".fs" ->
+        processLineFsFile rules
+    | _ -> processLineCsFile
+
+let processFile rules read processLines file =
     let original = file |> read
     let processed =
         original
-        |> processLines (processSingleLine read file)
+        |> processLines (file |> processLine rules)
         |> Seq.toArray
     match (original, processed) |> difference with
     | (s, false) when s.IsEmpty -> None
-    | s -> Some processed
+    | sprintf -> Some processed
+
+let getRules read csvPath =
+    IOWrapper.combine csvPath "lineRefactor.csv"
+    |> read
+    |> Array.map (split ',' >> Array.toList)
+    |> Array.toList
 
 let fileFilter exists file =
     (exists file) && (isRegexMatch ".fs$" file || isRegexMatch ".cs$" file)

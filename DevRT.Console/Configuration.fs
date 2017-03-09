@@ -17,6 +17,10 @@ let getFileWatchConfig (config: Config) =
     ExcludedDirectories = config.FileWatch.ExcludedDirectories
     FileChangeWatchDir = config.FileWatch.FileChangeWatchDir }
 
+let getRefactorConfig (config: Config) =
+    {
+    DevRTDeploymentDir = config.Environment.DevRTDeploymentDir }
+
 let getNUnitConfig (config: Config) =
     {
     TestProjects = config.NUnit.TestProjects |> getTestProjectConfig

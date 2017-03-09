@@ -3,6 +3,7 @@ Environment:
     NUnitConsole:
         C:/Program Files (x86)/NUnit.org/nunit-console/nunit3-console.exe
     DeploymentDir: c:/run/nunit
+    DevRTDeploymentDir: c:/run/console
 FileWatch:
     SleepMiliseconds: 1000
     FileChangeWatchDir: c:/DevRT
