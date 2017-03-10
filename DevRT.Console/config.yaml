@@ -2,11 +2,34 @@ Environment:
     MsBuildPath: c:/Program Files (x86)/MSBuild/14.0/Bin/MsBuild.exe
     NUnitConsole:
         C:/Program Files (x86)/NUnit.org/nunit-console/nunit3-console.exe
-    DeploymentDir: c:/run/nunit
+    NUnitDeploymentDir: c:/run/nunit
     DevRTDeploymentDir: c:/run/console
+Project: air
+Projects:
+    - WatchDir: c:/DevRT
+      Solution:
+          MsBuildWorkingDir: c:/DevRT/DevRT.Tests
+          OptionArgs:
+          SolutionOrProjectFile: DevRT.Tests.fsproj
+      NUnit:
+          TestProjects:
+              On: true
+              Directory: c:/DevRT/DevRT.Tests/bin/Debug
+              Dlls:
+              - DevRT.Tests
+    - WatchDir: c:/iot/bag/air
+      Solution:
+          MsBuildWorkingDir: c:/iot/bag/air
+          OptionArgs:
+          SolutionOrProjectFile: air.fsproj
+      NUnit:
+          TestProjects:
+              On: false
+              Directory:
+              Dlls:
+              - DevRT.Tests 
 FileWatch:
     SleepMiliseconds: 1000
-    FileChangeWatchDir: c:/DevRT
     ExcludedDirectories:
     - packages
     - debug
@@ -17,14 +40,4 @@ FileWatch:
     - .git
     - .vs
     - logs
-    - out
-Solution:
-    MsBuildWorkingDir: c:/DevRT/DevRT.Tests
-    OptionArgs:
-    SolutionOrProjectFile: DevRT.Tests.fsproj
-NUnit:
-    TestProjects:
-        TestsOn: true
-        Directory: c:/DevRT/DevRT.Tests/bin/Debug
-        Dlls:
-        - DevRT.Tests
+     - out

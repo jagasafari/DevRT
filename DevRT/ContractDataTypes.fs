@@ -15,7 +15,7 @@ type FileWatchConfig = {
 type NUnitConfig = {
     TestProjects: TestProjects
     NUnitConsole: string
-    DeploymentDir: string }
+    NUnitDeploymentDir: string }
 
 type MsBuildConfig = {
     MsBuildPath: string

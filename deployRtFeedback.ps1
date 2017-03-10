@@ -1,9 +1,15 @@
+$devRTDir = 'c:\DevRT'
 $processName = 'DevRT.Console'
 $deployPath = 'c:\run\console'
-$packagePath = 'c:\DevRT\DevRT.Console\bin\Debug'
+$packagePath = Join-Path $devRTDir 'DevRT.Console\bin\Debug'
+$paketPackagePath = Join-Path $devRTDir 'packages'
 $sln = 'MyDev.sln'
 $runningProcess = Get-Process -name $processName -ErrorAction SilentlyContinue
 if($runningProcess) { Stop-Process -name $processName }
+if(-Not (Test-Path $paketPackagePath)) { 
+    Write-Host "running paket" -foregroundcolor Green
+    .\.paket\paket.exe update 
+}
 MSBuild.exe $sln /t:clean
 MSBuild.exe $sln /t:build
 if(Test-Path $deployPath) { Remove-Item $deployPath -Recurse }

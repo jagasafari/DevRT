@@ -6,31 +6,56 @@ type Config = FSharp.Configuration.YamlConfig<"config.yaml">
 
 let initConfig() = Config()
 
-let getTestProjectConfig (config: Config.NUnit_Type.TestProjects_Type) =
-    match config.TestsOn with
-    | false -> RunTestsOff
-    | true -> (config.Directory, config.Dlls |> Seq.toList) |> RunTestsOn
+let getTestProjectConfig = function
+    | (project: Config.Projects_Item_Type)
+        when project.NUnit.TestProjects.On ->
+        let testProjects = project.NUnit.TestProjects
+        (testProjects.Directory,
+            testProjects.Dlls |> Seq.toList)
+        |> RunTestsOn
+    | _ -> RunTestsOff
+
+let getProject (config: Config) =
+    config.Projects
+    |> Seq.find(
+        fun (projectConfig: Config.Projects_Item_Type) ->
+            let msBuildDir: string =
+                    projectConfig.Solution.MsBuildWorkingDir
+            printfn "%s:%s" msBuildDir config.Project
+            msBuildDir.Contains config.Project)
 
 let getFileWatchConfig (config: Config) =
     {
     SleepMilliseconds = config.FileWatch.SleepMiliseconds
     ExcludedDirectories = config.FileWatch.ExcludedDirectories
-    FileChangeWatchDir = config.FileWatch.FileChangeWatchDir }
+    FileChangeWatchDir =
+        config |> getProject |> fun x -> x.WatchDir }
 
 let getRefactorConfig (config: Config) =
     {
-    DevRTDeploymentDir = config.Environment.DevRTDeploymentDir }
+    DevRTDeploymentDir =
+        config.Environment.DevRTDeploymentDir }
 
 let getNUnitConfig (config: Config) =
     {
-    TestProjects = config.NUnit.TestProjects |> getTestProjectConfig
+    TestProjects = config |> getProject |> getTestProjectConfig
     NUnitConsole = config.Environment.NUnitConsole
-    DeploymentDir = config.Environment.DeploymentDir }
+    NUnitDeploymentDir =
+        config.Environment.NUnitDeploymentDir }
 
-let getMsBuildConfig log (config: Config) =
-    log config.Solution.OptionArgs
+let getMsBuildConfig (config: Config) =
     {
     MsBuildPath = config.Environment.MsBuildPath
-    MsBuildWorkingDir = config.Solution.MsBuildWorkingDir
-    SolutionOrProjectFile = config.Solution.SolutionOrProjectFile
-    OptionArgs = config.Solution.OptionArgs}
+    MsBuildWorkingDir =
+        config
+        |> getProject
+        |> fun project -> project.Solution.MsBuildWorkingDir
+    SolutionOrProjectFile =
+        config
+        |> getProject
+        |> fun project ->
+            project.Solution.SolutionOrProjectFile
+    OptionArgs =
+        config
+        |> getProject
+        |> fun project -> project.Solution.OptionArgs }

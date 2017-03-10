@@ -22,7 +22,7 @@ let composeNUnitHandle (nUnitConfig: NUnitConfig) =
         cleanDirectory
             (deleteAllFiles exists deleteRecursive)
             createDirectory
-            nUnitConfig.DeploymentDir
+            nUnitConfig.NUnitDeploymentDir
     let run' getStartInfo =
         runProcess
             getStartInfo
@@ -36,7 +36,7 @@ let composeNUnitHandle (nUnitConfig: NUnitConfig) =
     let prepareAndRunTests() =
         NUnit.prepareAndRunTests
             (NUnit.getTestDirectoryName
-            >> combine nUnitConfig.DeploymentDir)
+            >> combine nUnitConfig.NUnitDeploymentDir)
             (ProcessRunner.getProcessStartInfo
                 nUnitConfig.NUnitConsole)
             cleanDirectory'
@@ -88,7 +88,7 @@ let composeRefactorHandle refactorConfig =
     Refactor.handle
         (Refactor.refactor
             (Refactor.processFile
-                (Refactor.getRules 
+                (Refactor.getRules
                     IOWrapper.readAllLines
                     refactorConfig.DevRTDeploymentDir)
                 IOWrapper.readAllLines
