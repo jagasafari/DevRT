@@ -1,7 +1,7 @@
 namespace DevRT
 
 type TestProjects =
-    | RunTestsOn of (string * string list) | RunTestsOff
+    | RunTestsOn of string * string list | RunTestsOff
 
 type RefactorConfig = {
     DevRTDeploymentDir: string }
@@ -21,4 +21,4 @@ type MsBuildConfig = {
     MsBuildPath: string
     MsBuildWorkingDir: string
     SolutionOrProjectFile: string
-    OptionArgs: string}
+    OptionArgs: string }

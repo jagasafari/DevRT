@@ -14,22 +14,23 @@ let notEmptyLine line =
 
 let notEmptyPairOfLines (l1, l2) = l1 |> notEmptyLine || l2 |> notEmptyLine
 
-let processLines processSingleLine lines =
+let processLines processLine lines =
     let last = lines |> Array.last
     let trimed =
         lines
         |> Array.toSeq
         |> Seq.pairwise
         |> Seq.filter notEmptyPairOfLines
-        |> Seq.map (fun (p1, _) -> p1 |> processSingleLine )
+        |> Seq.map (fun (p1, _) -> p1 |> processLine )
     seq {
         yield! trimed
-        if last |> notEmptyLine then yield last |> processSingleLine }
+        if last |> notEmptyLine then
+            yield last |> processLine }
 
 let processLineFsFile rules =
     removeTrailingWhiteSpaces
     >> replaceLine
-        replaceRegex (getRegExReplacementForFSharp rules)
+        replaceRegex (rules |> List.map matchLineRefactorRule)
 
 let processLineCsFile = removeTrailingWhiteSpaces
 
@@ -44,11 +45,11 @@ let processLine rules = function
         processLineFsFile rules
     | _ -> processLineCsFile
 
-let processFile rules read processLines file =
+let processFile processLine read processLines file =
     let original = file |> read
     let processed =
         original
-        |> processLines (file |> processLine rules)
+        |> processLines (file |> processLine)
         |> Seq.toArray
     match (original, processed) |> difference with
     | (s, false) when s.IsEmpty -> None

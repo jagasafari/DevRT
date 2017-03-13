@@ -3,11 +3,17 @@ module DevRT.DataTypes
 open System
 
 type MsBuildStatus =
-    Starting | Building | BuildFailed | BuildSucceeded | MSBuildError
+    | Starting
+    | Building
+    | BuildFailed
+    | BuildSucceeded
+    | MSBuildError
 
-type NUnitOutputStatus = Noise | Summary | Failure | Invalid | FailureLineInfo
+type NUnitOutputStatus =
+    | Noise | Summary | Failure | Invalid | FailureLineInfo
 
-type RunAction = | CheckKeyPressed | HandleKeyPressed | RunCi | RunRefactor
+type RunAction =
+    | CheckKeyPressed | HandleKeyPressed | RunCi | RunRefactor
 
 type LogMessageInfo =
     | FileWatchModificationFound of string

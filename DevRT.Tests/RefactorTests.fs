@@ -1,18 +1,20 @@
 module DevRT.Tests.RefactorTests
 
 open System
+open System.Configuration
 open System.IO
 open NUnit.Framework
 open Swensen.Unquote
 open DevRT.DataTypes
+open DevRT.IOWrapper
 open DevRT.Refactor
 open DevRT.RefactorLine
 open DevRT.StringWrapper
 
-let randomString n =
+let randomString size =
     let rnd = Random()
     let getLetter() = (char)((int)'a' + rnd.Next(0, 26))
-    [1..n]
+    [1..size]
     |> List.map (fun _ -> getLetter() |> string)
     |> List.fold (fun acc el -> acc + el) String.Empty
 
@@ -51,7 +53,7 @@ let processLines' = processLines removeTrailingWhiteSpaces
 [<TestCase("randomString, emptyLine, randomString", 3)>]
 [<TestCase("randomString, emptyLine, emptyLine", 1)>]
 [<TestCase("randomString, emptyLine, emptyLine, emptyLine", 1)>]
-let ``Remove trailing blank lines: n blank lines -> file trimmed`` lines expected =
+let ``Remove trailing blank lines -> file trimmed`` lines expected =
     lines |> split ',' |> getTestLines |> processLines' |> Seq.length =! expected
 
 [<TestCase("abc", "abc")>]
@@ -74,7 +76,11 @@ let ``fileFilter: cases`` exists file expected =
 let ``refactor: none existing files -> noting processed`` expected =
     let add, getResult = Common.mock()
     handle
-        (fun f -> add (sprintf "processing %s" f))
+        (fun file -> add (sprintf "processing %s" file))
         (fun _ -> add "filtering"; false)
         "efefw"
     getResult() =! [expected]
+
+let getRules() =
+    ConfigurationManager.AppSettings.["rules"]
+    |> getRules readAllLines

@@ -4,7 +4,7 @@ Environment:
         C:/Program Files (x86)/NUnit.org/nunit-console/nunit3-console.exe
     NUnitDeploymentDir: c:/run/nunit
     DevRTDeploymentDir: c:/run/console
-Project: air
+Project: DevRT.Tests
 Projects:
     - WatchDir: c:/DevRT
       Solution:

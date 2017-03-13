@@ -88,9 +88,10 @@ let composeRefactorHandle refactorConfig =
     Refactor.handle
         (Refactor.refactor
             (Refactor.processFile
-                (Refactor.getRules
-                    IOWrapper.readAllLines
-                    refactorConfig.DevRTDeploymentDir)
+                (Refactor.processLine
+                    (Refactor.getRules
+                        IOWrapper.readAllLines
+                        refactorConfig.DevRTDeploymentDir))
                 IOWrapper.readAllLines
                 Refactor.processLines)
             IOWrapper.writeAllLines)

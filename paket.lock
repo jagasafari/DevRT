@@ -2,7 +2,7 @@ FRAMEWORK: >= NET46
 NUGET
   remote: https://www.nuget.org/api/v2
     FSharp.Configuration (0.6.4)
-    FSharp.Core (4.1)
+    FSharp.Core (4.1.0.2)
       System.ValueTuple (>= 4.3)
     Microsoft.Win32.Primitives (4.3) - framework: >= net463
     NETStandard.Library (1.6.1) - framework: >= net463
@@ -27,7 +27,7 @@ NUGET
       System.Security.Cryptography.Primitives (>= 4.3)
       System.Security.Cryptography.X509Certificates (>= 4.3)
       System.Threading.Timer (>= 4.3)
-    NLog (4.4.3)
+    NLog (4.4.4)
     NUnit (3.6.1)
       NETStandard.Library (>= 1.6) - framework: >= net463
       System.Runtime.Loader (>= 4.0) - framework: >= net463

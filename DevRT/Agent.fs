@@ -3,16 +3,16 @@ module DevRT.Agent
 let createAgent logHandledError logFatalError handle =
     let agent =
         MailboxProcessor.Start(fun inbox ->
-            let rec messageLoop() = async {
+            let rec messageLoop () = async {
                 try
-                    let! msg = inbox.Receive()
+                    let! msg = inbox.Receive ()
                     msg |> handle
-                    return! messageLoop()
+                    return! messageLoop ()
                 with exn ->
                     exn |> logHandledError
-                    return! messageLoop()
+                    return! messageLoop ()
             }
-            messageLoop()
+            messageLoop ()
         )
     agent.Error.Add(fun exn -> exn |> logFatalError)
     agent
