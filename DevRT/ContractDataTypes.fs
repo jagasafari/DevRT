@@ -4,7 +4,8 @@ type TestProjects =
     | RunTestsOn of string * string list | RunTestsOff
 
 type RefactorConfig = {
-    DevRTDeploymentDir: string }
+    DevRTDeploymentDir: string
+    IsRefactorOn: bool }
 
 [<NoComparison>]
 type FileWatchConfig = {

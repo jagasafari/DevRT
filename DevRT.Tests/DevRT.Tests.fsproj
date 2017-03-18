@@ -41,15 +41,25 @@
   </Target>
   <ItemGroup>
     <None Include="paket.references" />
-    <None Include="App.config" />
+    <None Include="App.config" >
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="before.txt" >
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="after.txt" >
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="Common.fs" />
     <Compile Include="StringWrapperTests.fs" />
     <Compile Include="RunTests.fs" />
     <Compile Include="RefactorTests.fs" />
     <Compile Include="RefactorLineTests.fs" />
+    <Compile Include="MsBuildTests.fs" />
     <Compile Include="NUnitTests.fs" />
     <Compile Include="FileUtilTests.fs" />
     <Compile Include="FileWatchAgentTests.fs" />
+    <Compile Include="RefactorIntegrationTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

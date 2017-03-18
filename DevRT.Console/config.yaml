@@ -7,6 +7,7 @@ Environment:
 Project: DevRT.Tests
 Projects:
     - WatchDir: c:/DevRT
+      IsRefactorOn: true
       Solution:
           MsBuildWorkingDir: c:/DevRT/DevRT.Tests
           OptionArgs:
@@ -18,6 +19,7 @@ Projects:
               Dlls:
               - DevRT.Tests
     - WatchDir: c:/iot/bag/air
+      IsRefactorOn: true
       Solution:
           MsBuildWorkingDir: c:/iot/bag/air
           OptionArgs:

@@ -33,7 +33,7 @@ let composeNUnitHandle (nUnitConfig: NUnitConfig) =
                     writelineYellow
                     (NUnit.writeFailureLineNumberInfo
                         writelineYellow)))
-    let prepareAndRunTests() =
+    let prepareAndRunTests () =
         NUnit.prepareAndRunTests
             (NUnit.getTestDirectoryName
             >> combine nUnitConfig.NUnitDeploymentDir)
@@ -47,7 +47,7 @@ let composeNUnitHandle (nUnitConfig: NUnitConfig) =
     NUnit.run prepareAndRunTests
 
 let composeMsBuildHandle (msBuildConfig: MsBuildConfig) =
-    let getMsBuildStartInfo() =
+    let getMsBuildStartInfo () =
         ProcessRunner.getProcessStartInfo
             msBuildConfig.MsBuildPath
             (MsBuild.getRunArgsString
@@ -70,7 +70,7 @@ let composeMsBuildHandle (msBuildConfig: MsBuildConfig) =
         getStatus
 
 let composeFileWatchHandle (config: FileWatchConfig) =
-    let getFiles() =
+    let getFiles () =
          FileWatch.getFiles
             (FileWatch.isBaseCase
                 config.ExcludedDirectories)
@@ -88,23 +88,25 @@ let composeRefactorHandle refactorConfig =
     Refactor.handle
         (Refactor.refactor
             (Refactor.processFile
-                (Refactor.processLine
-                    (Refactor.getRules
+                (RefactorLine.processLine
+                    (RefactorLine.getRules
                         IOWrapper.readAllLines
                         refactorConfig.DevRTDeploymentDir))
                 IOWrapper.readAllLines
                 Refactor.processLines)
             IOWrapper.writeAllLines)
         (Refactor.fileFilter IOWrapper.fileExists)
+        refactorConfig.IsRefactorOn
 
 let getPostToFileWatchAgent
     fileWatchConfig nUnitConfig msBuildConfig refactorConfig =
     let nUnitAgent =
         createAgent' (composeNUnitHandle nUnitConfig)
-    let msBuildHandle() =
+    let msBuildHandle () =
         composeMsBuildHandle msBuildConfig nUnitAgent.Post
     let msBuildAgent = createAgent' msBuildHandle
-    let refactorAgent = createAgent' (composeRefactorHandle refactorConfig)
+    let refactorAgent =
+        createAgent' (composeRefactorHandle refactorConfig)
     let fileWatchAgent =
         createAgent'
             (composeFileWatchHandle

@@ -9,12 +9,18 @@ let createMsBuildStatus () =
     update, fun () -> status
 
 let getContinuationStatus = function
-    | Starting -> Building | x -> x
+    | Starting -> Building | currentStatus -> currentStatus
+
+let isMsBuildError = isRegexMatch "MSBUILD[\s]*:[\s]*error"
+
+let isBuildSuccessful = contains "Build succeeded"
+
+let isBuildError = contains "Build FAILED"
 
 let getUpdatedStatus getContinuationStatus = function
-    | d when contains "Build succeeded" d -> BuildSucceeded
-    | d when contains "Build FAILED" d -> BuildFailed
-    | d when contains "MSBUILD: error" d -> MSBuildError
+    | output when isBuildSuccessful output -> BuildSucceeded
+    | output when isBuildError output -> BuildFailed
+    | output when isMsBuildError output -> MSBuildError
     | _ -> () |> getContinuationStatus
 
 let processOutput

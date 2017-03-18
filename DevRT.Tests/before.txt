@@ -1,0 +1,23 @@
+d DevRT.FileUtil
+
+l doCopy createPath get copy e
+    get g
+    p si
+        (f target j
+            target p createPath p copy target p ignore)
+
+l copyAllFiles
+    createDirectory copyFiles copySubdirectories source dest e
+    l r copyAllFiles source dest e
+        dest p createDirectory
+        copyFiles source dest
+        copySubdirectories copyAllFiles source dest
+    copyAllFiles source dest
+
+l deleteAllFiles exists deleteRecursive target e
+    if target p exists z target p deleteRecursive
+
+l cleanDirectory deleteAllFiles createDirectory deploymentDir e
+    deploymentDir p deleteAllFiles
+    deploymentDir p createDirectory
+

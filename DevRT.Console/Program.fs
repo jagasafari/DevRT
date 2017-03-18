@@ -1,4 +1,4 @@
-﻿module DevRT.Console
+module DevRT.Console
 
 open System
 open Configuration
@@ -9,13 +9,13 @@ let main argv =
     let fileWatchConfig = getFileWatchConfig config project
     let nUnitConfig = getNUnitConfig config project
     let msBuildConfig = getMsBuildConfig config project
-    let refactorConfig = getRefactorConfig config
+    let refactorConfig = getRefactorConfig config project
 
     let run =
-        ExportApi.getPostToFileWatchAgent 
-            fileWatchConfig 
-            nUnitConfig 
-            msBuildConfig 
+        ExportApi.getPostToFileWatchAgent
+            fileWatchConfig
+            nUnitConfig
+            msBuildConfig
             refactorConfig
 
     () |> run |> ignore

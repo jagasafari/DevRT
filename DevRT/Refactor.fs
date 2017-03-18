@@ -1,18 +1,13 @@
 module DevRT.Refactor
 
-open System
 open System.Collections.Generic
 open System.Linq
 open DataTypes
 open RefactorLine
 open StringWrapper
 
-let notNewLine = (<>) Environment.NewLine
-
-let notEmptyLine line =
-    (line |> notNewLine) && (line |> isNullOrWhiteSpace |> not)
-
-let notEmptyPairOfLines (l1, l2) = l1 |> notEmptyLine || l2 |> notEmptyLine
+let notEmptyPairOfLines (line1, line2) =
+    line1 |> notEmptyLine || line2 |> notEmptyLine
 
 let processLines processLine lines =
     let last = lines |> Array.last
@@ -21,29 +16,22 @@ let processLines processLine lines =
         |> Array.toSeq
         |> Seq.pairwise
         |> Seq.filter notEmptyPairOfLines
-        |> Seq.map (fun (p1, _) -> p1 |> processLine )
+        |> Seq.map (fun (line1, _) -> line1 |> processLine )
     seq {
         yield! trimed
         if last |> notEmptyLine then
             yield last |> processLine }
 
-let processLineFsFile rules =
-    removeTrailingWhiteSpaces
-    >> replaceLine
-        replaceRegex (rules |> List.map matchLineRefactorRule)
-
-let processLineCsFile = removeTrailingWhiteSpaces
-
 let difference (original, processed) =
-    let setDiff = (set original) - (set processed)
+    let setDiff = (set processed) - (set original)
     let lineNumDiff =
         (original.Count()) <> (processed.Count())
     setDiff, lineNumDiff
 
-let processLine rules = function
-    | file when file |> contains ".fs" ->
-        processLineFsFile rules
-    | _ -> processLineCsFile
+let getChanged difference (original, processed) =
+    match (original, processed) |> difference with
+    | ((setDiff: Set<_>), false) when setDiff.IsEmpty -> None
+    | setDiff -> Some processed
 
 let processFile processLine read processLines file =
     let original = file |> read
@@ -51,23 +39,19 @@ let processFile processLine read processLines file =
         original
         |> processLines (file |> processLine)
         |> Seq.toArray
-    match (original, processed) |> difference with
-    | (s, false) when s.IsEmpty -> None
-    | sprintf -> Some processed
-
-let getRules read csvPath =
-    IOWrapper.combine csvPath "lineRefactor.csv"
-    |> read
-    |> Array.map (split ',' >> Array.toList)
-    |> Array.toList
+    (original, processed) |> getChanged difference
 
 let fileFilter exists file =
-    (exists file) && (isRegexMatch ".fs$" file || isRegexMatch ".cs$" file)
+    (exists file) &&
+    (isRegexMatch ".fs$" file || isRegexMatch ".cs$" file)
 
-let refactor processFile writeLines file =
+let refactor processFile writeLines file outFile =
     file
     |> processFile
-    |> Option.fold(fun _ lines -> lines |> writeLines file) ()
+    |> Option.fold(fun _ lines ->
+        lines |> writeLines outFile) ()
 
-let handle refactor fileFilter = function
-    | file when fileFilter file -> refactor file | _ -> ()
+let handle refactor fileFilter isRefactorOn = function
+    | _ when isRefactorOn |> not -> ()
+    | file when fileFilter file -> refactor file file
+    | _ -> ()

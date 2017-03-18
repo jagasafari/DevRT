@@ -45,8 +45,8 @@ let ``notEmptyLine: new line`` () =
 [<TestCase("dgfhs  ha", "", true)>]
 [<TestCase("      ", "", false)>]
 [<TestCase("      ", "    ", false)>]
-let ``notEmptyPairsOfLines: cases`` l1 l2 expected =
-    (l1, l2) |> notEmptyPairOfLines =! expected
+let ``notEmptyPairsOfLines: cases`` let1 let2 expected =
+    (let1, let2) |> notEmptyPairOfLines =! expected
 
 let processLines' = processLines removeTrailingWhiteSpaces
 [<TestCase("randomString, emptyLine", 1)>]
@@ -76,8 +76,10 @@ let ``fileFilter: cases`` exists file expected =
 let ``refactor: none existing files -> noting processed`` expected =
     let add, getResult = Common.mock()
     handle
-        (fun file -> add (sprintf "processing %s" file))
+        (fun file outFile ->
+            add (sprintf "processing %s" file))
         (fun _ -> add "filtering"; false)
+        true
         "efefw"
     getResult() =! [expected]
 

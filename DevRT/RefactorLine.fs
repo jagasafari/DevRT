@@ -1,49 +1,52 @@
 module DevRT.RefactorLine
 
+open System
 open DataTypes
 open StringWrapper
 
 let removeTrailingWhiteSpaces = trimEnd ' '
 
-let replaceLine replace rules line =
-    let rec accLine rules line =
-        match rules with
-        | (pattern, replacement)::tl ->
-            accLine tl (replace pattern replacement line)
-        | [] -> line
-    accLine rules line
+let notNewLine = (<>) Environment.NewLine
 
-let likeLetRule short key =
-    sprintf "(?<m1>^| )%s(?<m2> |$)" short,
-    sprintf "${m1}%s${m2}" key
+let notEmptyLine line =
+    (line |> notNewLine) && (line |> isNullOrWhiteSpace |> not)
 
-let likeFunRule short key =
-    sprintf "\(%s " short, sprintf "(%s " key
+let mapRule line =
+    match (line |> split ',') with
+    | [|key; replacement|] -> ( key, replacement )
+    | _ -> failwith "wrong rule format"
 
-let likeSeqRule short key =
-    sprintf "(?<m1>^| )%s(?<m2> |$|\()" short,
-    sprintf "${m1}%s${m2}" key
+let getRules read csvPath =
+    IOWrapper.combine csvPath "lineRefactor.csv"
+    |> read
+    |> Array.map mapRule
+    |> Array.toList
 
-let likeType () =
-    "(?<m1>[a-zA-Z]+):(?<m2>[a-zA-Z]+)",
-    "${m1}: ${m2}"
+let chopLine = splitRegex "([^a-zA-Z])"
 
-let likeTupleType() =
-    "(?<m1>[a-zA-Z]+)\*(?<m2>[a-zA-Z]+)",
-    "${m1} * ${m2}"
-let likeStringType() =
-    "(?<m1>^| |<)st(?<m2> |$|\)|>)", "${m1}string${m2}"
+let replaceAbrev rules line =
+    let rules = rules |> Map.ofList
+    line
+    |> chopLine
+    |> Array.toList
+    |> List.fold ( fun acc next ->
+        let newNext =
+            defaultArg (rules |> Map.tryFind next) next
+        newNext::acc ) []
+    |> List.rev
+    |> List.fold (+) String.Empty
 
-let likeType2 () =
-    "(?<m1>\S) (?<m2>[a-zA-Z]+)(?<m3>:) (?<m4>[a-zA-Z]+) ",
-    "${m1} (${m2}${m3} ${m4}) "
+let replaceLine replaceAbrev = function
+    | line when isRegexMatch ".*\"|\'.*\"|\'.*" line -> line
+    | line -> replaceAbrev line
 
-let matchLineRefactorRule = function
-    | ["LikeLet";short;key;_] -> likeLetRule short key
-    | ["LikeFun";short;key;_] -> likeFunRule short key
-    | ["LikeSeq";short;key;_] -> likeSeqRule short key
-    | ["LikeType";_;_;_] -> likeType()
-    | ["LikeTupleType";_;_;_] -> likeTupleType()
-    | ["LikeStringType";_;_;_] -> likeStringType()
-    | ["LikeType2";_;_;_] -> likeType2()
-    | _ -> failwith "not known line refactor rule"
+let processLineCsFile = removeTrailingWhiteSpaces
+
+let processLineFsFile rules =
+    removeTrailingWhiteSpaces
+    >> replaceLine (replaceAbrev rules)
+
+let processLine rules = function
+    | file when file |> contains ".fs" ->
+        processLineFsFile rules
+     | _ -> processLineCsFile

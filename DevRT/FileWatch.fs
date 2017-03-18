@@ -7,15 +7,17 @@ open IOWrapper
 open StringWrapper
 
 let isBaseCase excludedDirs dir =
-    excludedDirs |> Seq.exists(fun x -> containsCaseInsensitive x dir)
+    excludedDirs
+    |> Seq.exists(fun excludedDir ->
+        containsCaseInsensitive excludedDir dir)
 
 let rec getFiles isBaseCase dir =
     let bc = dir |> isBaseCase
     seq {
         if bc |> not then
             yield! dir |> enumerateFiles
-            for d in dir |> enumerateDirectories do
-                yield! getFiles isBaseCase d }
+            for directory in dir |> enumerateDirectories do
+                yield! getFiles isBaseCase directory }
 
 let getTimeLine (getNow: unit -> DateTime) sleepMiliseconds =
     let now = getNow()
@@ -27,8 +29,8 @@ let getLastWriteTime filePath = (IO.FileInfo filePath).LastWriteTime
 let isNewModification getTimeLine getLastWriteTime filePath =
     (filePath |> getLastWriteTime) > (getTimeLine())
 
-let publishAboutModification
-    log post postModifiedFile = function
+let publishAboutModification log post postModifiedFile =
+    function
     | None -> ()
     | Some file ->
         file |> log; post(); file |> postModifiedFile
