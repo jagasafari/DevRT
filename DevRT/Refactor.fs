@@ -9,11 +9,23 @@ open StringWrapper
 let notEmptyPairOfLines (line1, line2) =
     line1 |> notEmptyLine || line2 |> notEmptyLine
 
+let rec emptyLineAbove (lines: string list) resultLines =
+    match lines with
+    | prev::curr::third::tail ->
+        emptyLineAbove
+            ( curr::third::tail ) ( prev::resultLines )
+    | [prev;curr] ->
+        emptyLineAbove [curr] ( prev::resultLines )
+    | [last] -> emptyLineAbove [] ( last::resultLines )
+    | [] -> resultLines |> List.rev
+
 let processLines processLine lines =
     let last = lines |> Array.last
     let trimed =
+        let lines = lines |> Array.toList
+        let lines = emptyLineAbove lines []
         lines
-        |> Array.toSeq
+        |> List.toSeq
         |> Seq.pairwise
         |> Seq.filter notEmptyPairOfLines
         |> Seq.map (fun (line1, _) -> line1 |> processLine )

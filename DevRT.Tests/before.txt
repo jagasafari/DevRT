@@ -3,8 +3,8 @@ d DevRT.FileUtil
 l doCopy createPath get copy e
     get g
     p si
-        (f target j
-            target p createPath p copy target p ignore)
+        i f target j
+            target p createPath p copy target p ignore o
 
 l copyAllFiles
     createDirectory copyFiles copySubdirectories source dest e

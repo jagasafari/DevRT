@@ -36,3 +36,9 @@ let getRules() =
 [<TestCase("    get g","    get ()")>]
 let ``replaceAbrev: cases`` line resultedLine =
     line |> replaceAbrev ( getRules() ) =! resultedLine
+
+[<TestCase (" let f = ()", false) >]
+[<TestCase ("let f = ()", true) >]
+[<TestCase ("l f = ()", true) >]
+let ``isMostOuterLet : cases`` case expeted =
+    isMostOuterLet case =! expeted

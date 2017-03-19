@@ -1,0 +1,6 @@
+d DevRT.AssemblyInfo
+
+op System.Runtime.CompilerServices
+
+[< assembly : InternalsVisibleTo ( "DevRT.Tests" ) >]
+g

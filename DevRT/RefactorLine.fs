@@ -4,6 +4,9 @@ open System
 open DataTypes
 open StringWrapper
 
+let isMostOuterLet line =
+    startsWith "let " line || startsWith "l " line
+
 let removeTrailingWhiteSpaces = trimEnd ' '
 
 let notNewLine = (<>) Environment.NewLine

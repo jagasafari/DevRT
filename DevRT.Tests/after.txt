@@ -3,8 +3,8 @@ module DevRT.FileUtil
 let doCopy createPath get copy =
     get ()
     |> Seq.iter
-        (fun target ->
-            target |> createPath |> copy target |> ignore)
+        ( fun target ->
+            target |> createPath |> copy target |> ignore )
 
 let copyAllFiles
     createDirectory copyFiles copySubdirectories source dest =

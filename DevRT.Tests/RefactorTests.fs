@@ -83,6 +83,14 @@ let ``refactor: none existing files -> noting processed`` expected =
         "efefw"
     getResult() =! [expected]
 
-let getRules() =
-    ConfigurationManager.AppSettings.["rules"]
-    |> getRules readAllLines
+[<Test>]
+let ``emptyLineAbove: no lines`` () =
+    emptyLineAbove [] [] =! []
+
+[<Test>]
+let ``emptyLineAbove: one line`` () =
+    emptyLineAbove ["a"] [] =! ["a"]
+
+[<Test>]
+let ``emptyLineAbove: two lines`` () =
+    emptyLineAbove ["a";"b"] [] =! ["a";"b"]

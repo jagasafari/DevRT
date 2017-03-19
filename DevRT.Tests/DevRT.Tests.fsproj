@@ -47,7 +47,19 @@
     <None Include="before.txt" >
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="before0.txt" >
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="before1.txt" >
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="after.txt" >
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="after0.txt" >
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="after1.txt" >
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="Common.fs" />

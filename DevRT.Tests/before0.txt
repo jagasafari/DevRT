@@ -1,0 +1,18 @@
+d DevRT.Agent
+
+l createAgent logHandledError logFatalError handle e
+    l agent e
+        mps i f inbox j
+            l r messageLoop g e a n
+                x
+                    la msg e inbox.Receive g
+                    msg p handle
+                    ra messageLoop g
+                wi h j
+                    h p logHandledError
+                    ra messageLoop g
+            m
+            messageLoop g
+        o
+    agent.Error.Add i f h j h p logFatalError o
+    agent
