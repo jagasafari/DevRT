@@ -94,3 +94,15 @@ let ``emptyLineAbove: one line`` () =
 [<Test>]
 let ``emptyLineAbove: two lines`` () =
     emptyLineAbove ["a";"b"] [] =! ["a";"b"]
+
+[<TestCase("let ", "b")>]
+[<TestCase("dfj", "b")>]
+[<TestCase("", "l ")>]
+[<TestCase("", "sdsl ")>]
+[<TestCase("", "")>]
+let ``emptyLineAbove: two lines, no append`` inPrev inCurr =
+    emptyLineAbove [inPrev; inCurr] [] =! [inPrev; inCurr]
+
+[<TestCase("a","l ")>]
+let ``emptyLineAbove: two lines, append`` inPrev inCurr =
+    emptyLineAbove [inPrev; inCurr] [] =! [inPrev; ""; inCurr]

@@ -13,9 +13,12 @@ let rec emptyLineAbove (lines: string list) resultLines =
     match lines with
     | prev::curr::third::tail ->
         emptyLineAbove
-            ( curr::third::tail ) ( prev::resultLines )
+            ( curr::third::tail )
+            ((prev, curr) |> appendIfMostOuterLet)@resultLines
     | [prev;curr] ->
-        emptyLineAbove [curr] ( prev::resultLines )
+        emptyLineAbove
+            [curr]
+            ((prev, curr) |> appendIfMostOuterLet)@resultLines
     | [last] -> emptyLineAbove [] ( last::resultLines )
     | [] -> resultLines |> List.rev
 

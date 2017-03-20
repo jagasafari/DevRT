@@ -37,8 +37,14 @@ let getRules() =
 let ``replaceAbrev: cases`` line resultedLine =
     line |> replaceAbrev ( getRules() ) =! resultedLine
 
-[<TestCase (" let f = ()", false) >]
-[<TestCase ("let f = ()", true) >]
-[<TestCase ("l f = ()", true) >]
-let ``isMostOuterLet : cases`` case expeted =
-    isMostOuterLet case =! expeted
+[<TestCase ("gf", " let f = ()","gf" ) >]
+[<TestCase ("", " let f = ()","" ) >]
+[<TestCase ("", "let f = ()","" ) >]
+[<TestCase ("", "l f = ()", "") >]
+let ``appendIfMostOuterLet : no append`` prev next expeted =
+    appendIfMostOuterLet ( prev, next ) =! [expeted]
+
+[<TestCase ("gfr", "let f = ()","gfr" ) >]
+[<TestCase ("heu", "l f = ()", "heu") >]
+let ``appendIfMostOuterLet : append`` prev next expeted =
+    appendIfMostOuterLet ( prev, next ) =! ""::[expeted]

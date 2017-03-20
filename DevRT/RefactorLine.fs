@@ -4,8 +4,13 @@ open System
 open DataTypes
 open StringWrapper
 
-let isMostOuterLet line =
-    startsWith "let " line || startsWith "l " line
+let appendIfMostOuterLet = function
+    | prev, next when
+        prev |> isNullOrWhiteSpace |> not
+        && (startsWith "let " next
+        || startsWith "l " next) ->
+            ""::[prev]
+    | prev, next -> [prev]
 
 let removeTrailingWhiteSpaces = trimEnd ' '
 
