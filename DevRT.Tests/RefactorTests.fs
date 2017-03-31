@@ -49,6 +49,7 @@ let ``notEmptyPairsOfLines: cases`` let1 let2 expected =
     (let1, let2) |> notEmptyPairOfLines =! expected
 
 let processLines' = processLines removeTrailingWhiteSpaces
+
 [<TestCase("randomString, emptyLine", 1)>]
 [<TestCase("randomString, emptyLine, randomString", 3)>]
 [<TestCase("randomString, emptyLine, emptyLine", 1)>]

@@ -9,18 +9,14 @@ open StringWrapper
 let notEmptyPairOfLines (line1, line2) =
     line1 |> notEmptyLine || line2 |> notEmptyLine
 
-let rec emptyLineAbove (lines: string list) resultLines =
+let rec emptyLineAbove (lines: string list) resultedLines =
     match lines with
-    | prev::curr::third::tail ->
-        emptyLineAbove
-            ( curr::third::tail )
-            ((prev, curr) |> appendIfMostOuterLet)@resultLines
-    | [prev;curr] ->
-        emptyLineAbove
-            [curr]
-            ((prev, curr) |> appendIfMostOuterLet)@resultLines
-    | [last] -> emptyLineAbove [] ( last::resultLines )
-    | [] -> resultLines |> List.rev
+    | prev::curr::tail when isEmptyLineRequired prev curr ->
+        emptyLineAbove (curr::tail) (resultedLines@[prev;""])
+    | prev::curr::tail ->
+        emptyLineAbove (curr::tail) (resultedLines@[prev])
+    | [last] -> emptyLineAbove [] (resultedLines@[last])
+    | [] -> resultedLines
 
 let processLines processLine lines =
     let last = lines |> Array.last

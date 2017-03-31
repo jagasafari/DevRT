@@ -15,7 +15,7 @@ l copyAllFiles
     copyAllFiles source dest
 
 l deleteAllFiles exists deleteRecursive target e
-    if target p exists z target p deleteRecursive
+    if target p exists te target p deleteRecursive
 
 l cleanDirectory deleteAllFiles createDirectory deploymentDir e
     deploymentDir p deleteAllFiles

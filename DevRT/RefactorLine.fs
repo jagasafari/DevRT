@@ -4,13 +4,18 @@ open System
 open DataTypes
 open StringWrapper
 
-let appendIfMostOuterLet = function
-    | prev, next when
-        prev |> isNullOrWhiteSpace |> not
-        && (startsWith "let " next
-        || startsWith "l " next) ->
-            ""::[prev]
-    | prev, next -> [prev]
+let isMostOuterLet line =
+    startsWith "let " line || startsWith "l " line
+
+let isTopMostAttribute prev curr =
+    prev |> startsWith "[<" |> not && startsWith "[<" curr
+
+let isLet prev curr =
+    prev |> startsWith "[<" |> not && isMostOuterLet curr
+
+let isEmptyLineRequired prev curr =
+    prev |> isNullOrWhiteSpace |> not
+    && (isLet prev curr || isTopMostAttribute prev curr)
 
 let removeTrailingWhiteSpaces = trimEnd ' '
 
@@ -57,4 +62,4 @@ let processLineFsFile rules =
 let processLine rules = function
     | file when file |> contains ".fs" ->
         processLineFsFile rules
-     | _ -> processLineCsFile
+    | _ -> processLineCsFile

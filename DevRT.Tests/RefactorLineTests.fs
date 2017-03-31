@@ -37,14 +37,11 @@ let getRules() =
 let ``replaceAbrev: cases`` line resultedLine =
     line |> replaceAbrev ( getRules() ) =! resultedLine
 
-[<TestCase ("gf", " let f = ()","gf" ) >]
-[<TestCase ("", " let f = ()","" ) >]
-[<TestCase ("", "let f = ()","" ) >]
-[<TestCase ("", "l f = ()", "") >]
+[<TestCase ("gf", " let f = ()", false ) >]
+[<TestCase ("", " let f = ()", false) >]
+[<TestCase ("", "let f = ()", false) >]
+[<TestCase ("", "l f = ()", false) >]
+[<TestCase ("gfr", "let f = ()", true ) >]
+[<TestCase ("heu", "l f = ()", true) >]
 let ``appendIfMostOuterLet : no append`` prev next expeted =
-    appendIfMostOuterLet ( prev, next ) =! [expeted]
-
-[<TestCase ("gfr", "let f = ()","gfr" ) >]
-[<TestCase ("heu", "l f = ()", "heu") >]
-let ``appendIfMostOuterLet : append`` prev next expeted =
-    appendIfMostOuterLet ( prev, next ) =! ""::[expeted]
+    isEmptyLineRequired prev next =! expeted

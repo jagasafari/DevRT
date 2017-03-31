@@ -68,6 +68,7 @@
     <Compile Include="RefactorTests.fs" />
     <Compile Include="RefactorLineTests.fs" />
     <Compile Include="MsBuildTests.fs" />
+    <Compile Include="ShortsDictTests.fs" />
     <Compile Include="NUnitTests.fs" />
     <Compile Include="FileUtilTests.fs" />
     <Compile Include="FileWatchAgentTests.fs" />

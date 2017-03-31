@@ -26,6 +26,7 @@ mps,MailboxProcessor.Start
 mu,mutable
 n,{
 na,namespace
+nf,open NUnit.Framework
 op,open
 o,)
 p,|>
@@ -39,8 +40,10 @@ sp,Seq.pairwise
 sm,Seq.map
 st,string
 si,Seq.iter
+su,open Swensen.Unquote
 t,type
-te,[<Test>]
+ts,[<Test>]
+te,then
 tc,[<TestCase()>]
 u,= function
 v,:
@@ -49,5 +52,4 @@ wi,with
 we,when
 x,try
 y,yield
-z,then
-zx,=!
+z,=!
